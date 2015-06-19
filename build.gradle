@@ -1,0 +1,15 @@
+apply plugin: "java"
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    logbackVersion = "1.+"
+    jnaVersion = "4.+"
+}
+
+dependencies {
+    compile "ch.qos.logback:logback-classic:$logbackVersion",
+            "net.java.dev.jna:jna:$jnaVersion"
+}

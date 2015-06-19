@@ -1,0 +1,14 @@
+target
+build
+classes
+tmp
+out
+jnaerator
+.gradle
+.idea/workspace.xml
+*.bin
+*.log
+*.swp
+*.class
+*.jar
+*~
