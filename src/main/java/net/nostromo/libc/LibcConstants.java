@@ -8,8 +8,11 @@ public interface LibcConstants {
 
     int PF_PACKET = 17;
     int SOCK_RAW = 3;
+
     int ETH_P_ALL = 0x0003;
     int ETH_P_IP = 0x0800;
+    int ETH_P_ARP = 0x0806;
+    int ETH_P_IPV6 = 0x86DD;
 
     int SOL_PACKET = 263;
     int PACKET_VERSION = 10;
@@ -78,8 +81,6 @@ public interface LibcConstants {
     int __NR_gettid = 186;
 
     int SIZE_OF_INT = Native.getNativeSize(Integer.class);
-
-    short HTONS_ETH_P_IP = htons((short) ETH_P_IP);
 
     static short htons(final short val) {
         return Short.reverseBytes(val);
