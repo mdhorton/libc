@@ -3,12 +3,7 @@ package net.nostromo.libc;
 import net.nostromo.libc.c.sockaddr_ll;
 import net.nostromo.libc.c.tpacket_req3;
 
-import static net.nostromo.libc.LibcConstants.htons;
-
 public class Structor implements LibcConstants {
-
-    private static byte ZERO_BYTE = (byte) 0;
-    private static byte ZERO_SHORT = (short) 0;
 
     public static sockaddr_ll sockaddr_ll(final String ifname, final short linkFamily, final int protocol) {
         return sockaddr_ll(ifname, linkFamily, protocol, ZERO_SHORT, ZERO_BYTE, ZERO_BYTE);
@@ -19,7 +14,7 @@ public class Structor implements LibcConstants {
         final sockaddr_ll saLink = new sockaddr_ll();
 
         saLink.sll_family = linkFamily;
-        saLink.sll_protocol = htons((short) protocol);
+        saLink.sll_protocol = Util.htons((short) protocol);
         saLink.sll_ifindex = LIBC.if_nametoindex(ifname);
         saLink.sll_hatype = hatype;
         saLink.sll_pkttype = pkttype;

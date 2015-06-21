@@ -2,13 +2,10 @@ package net.nostromo.libc;
 
 import sun.misc.Unsafe;
 
-import java.nio.ByteOrder;
-
 public class NativeHeapBuffer {
 
     protected static final Unsafe UNSAFE = TheUnsafe.UNSAFE;
     protected static final long BYTE_ARRAY_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
-    protected static final boolean BIG_ENDIAN = ByteOrder.nativeOrder().equals(ByteOrder.BIG_ENDIAN);
 
     protected final byte[] buffer;
     protected final int bufferSize;
@@ -59,7 +56,7 @@ public class NativeHeapBuffer {
     }
 
     public short getNetworkShort() {
-        if (BIG_ENDIAN) return getShort();
+        if (Util.BIG_ENDIAN) return getShort();
         else return Short.reverseBytes(getShort());
     }
 
@@ -74,7 +71,7 @@ public class NativeHeapBuffer {
     }
 
     public int getNetworkInt() {
-        if (BIG_ENDIAN) return getInt();
+        if (Util.BIG_ENDIAN) return getInt();
         else return Integer.reverseBytes(getInt());
     }
 
@@ -89,7 +86,7 @@ public class NativeHeapBuffer {
     }
 
     public long getNetworkLong() {
-        if (BIG_ENDIAN) return getLong();
+        if (Util.BIG_ENDIAN) return getLong();
         else return Long.reverseBytes(getLong());
     }
 }

@@ -12,7 +12,7 @@ public class PacketMmapSocket extends Socket {
 
     public void setupTPacketV3() {
         final IntByReference ref = new IntByReference(TPACKET_V3);
-        LIBC.setsockopt(fd, SOL_PACKET, PACKET_VERSION, ref.getPointer(), SIZE_OF_INT);
+        LIBC.setsockopt(fd, SOL_PACKET, PACKET_VERSION, ref.getPointer(), Util.SIZE_OF_INT);
     }
 
     public void setupPacketRxRing(final tpacket_req3 req3) {
@@ -27,7 +27,7 @@ public class PacketMmapSocket extends Socket {
     public void setupPacketFanout(final int fanoutType, final int pid) {
         final int fanoutVal = ((pid & 0xffff) | (fanoutType << 16));
         final IntByReference ref = new IntByReference(fanoutVal);
-        LIBC.setsockopt(fd, SOL_PACKET, PACKET_FANOUT, ref.getPointer(), SIZE_OF_INT);
+        LIBC.setsockopt(fd, SOL_PACKET, PACKET_FANOUT, ref.getPointer(), Util.SIZE_OF_INT);
     }
 
     public Pointer mmap(final long mapSize) {

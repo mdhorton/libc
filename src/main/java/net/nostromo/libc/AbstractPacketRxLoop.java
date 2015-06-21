@@ -1,9 +1,7 @@
 package net.nostromo.libc;
 
 import net.nostromo.libc.c.pollfd;
-import net.nostromo.libc.struct.EthHdr;
-import net.nostromo.libc.struct.TPacket3Hdr;
-import net.nostromo.libc.struct.TPacketBlockHdr;
+import net.nostromo.libc.struct.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.Unsafe;
@@ -15,6 +13,8 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
 
     protected final TPacket3Hdr tp3Hdr = new TPacket3Hdr();
     protected final EthHdr ethHdr = new EthHdr();
+    protected final IpHdr ipHdr = new IpHdr();
+    protected final TcpHdr tcpHdr = new TcpHdr();
 
     protected final long mmapAddress;
     protected final int sockFd;
@@ -35,7 +35,7 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
 
         final pollfd pollfd = new pollfd();
         pollfd.fd = sockFd;
-        pollfd.events = POLLIN | POLLERR;
+        pollfd.events = (short) (POLLIN | POLLERR);
         pollfd.revents = 0;
         pollfd.write();
 
@@ -43,16 +43,23 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
 
         while (true) {
             final long blockStart = (long) blockSize * blockIdx;
-            final long blockStatusOffset = mmapAddress + blockStart + 8; // skip 2 ints, so add 8 bytes
+            final long blockStatusOffset = mmapAddress + blockStart + 8; // status is 8 bytes into the block
+
+            buffer.refill(blockStart, TPacketBlockHdr.SIZE);
+            blockHdr.init(buffer, 0);
 
             // poll the block until the kernel gives it back to user space
-            while ((unsafe.getInt(blockStatusOffset) & TP_STATUS_USER) == 0) {
+            while ((blockHdr.block_status & TP_STATUS_USER) == 0) {
                 LIBC.poll(pollfd, 1, -1);
+                buffer.refill(blockStart, TPacketBlockHdr.SIZE);
+                blockHdr.init(buffer, 0);
             }
 
-            // fill the heap buffer from the native off-heap memory
-            buffer.refill(blockStart);
+            // fill the heap buffer from the off-heap memory
+            buffer.refill(blockStart, Integer.toUnsignedLong(blockHdr.block_len));
             blockHdr.init(buffer, 0);
+
+            // TODO: chk_sum block status
 
             walkBlock(blockHdr);
 
@@ -66,48 +73,63 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
     }
 
     protected void walkBlock(final TPacketBlockHdr blockHdr) {
-        // TODO: check block status
+        log.info("{}", blockHdr);
+        long linkLayerOffset = blockHdr.offset_to_first_pkt;
 
-        long packetOffset = blockHdr.offsetToFirstPkt;
-
-        for (int idx = 0; idx < blockHdr.numPackets; idx++) {
-            tp3Hdr.init(buffer, packetOffset);
-            handlePacket(packetOffset);
-            packetOffset += tp3Hdr.tp_next_offset;
+        for (int idx = 0; idx < blockHdr.num_packets; idx++) {
+            tp3Hdr.init(buffer, linkLayerOffset);
+            log.info("{}", tp3Hdr);
+            handlePacket(linkLayerOffset);
+            linkLayerOffset += tp3Hdr.tp_next_offset;
         }
     }
 
-    protected void handlePacket(final long packetOffset) {
-        ethHdr.init(buffer, packetOffset + tp3Hdr.tp_mac);
+    protected void handlePacket(final long linkLayerOffset) {
+        long inetLayerOffset = linkLayerOffset + tp3Hdr.tp_mac;
+        ethHdr.init(buffer, inetLayerOffset);
+        inetLayerOffset += ETH_HLEN;
+        log.info("{}", ethHdr);
 
-        switch (Short.toUnsignedInt(ethHdr.h_proto)) {
+        switch (Short.toUnsignedInt(ethHdr.eth_type)) {
             case ETH_P_IP:
-                handleIpV4Packet();
+                handleIpV4Packet(inetLayerOffset);
                 break;
             case ETH_P_IPV6:
-                handleIpV6Packet();
+                handleIpV6Packet(inetLayerOffset);
                 break;
             case ETH_P_ARP:
-                handleArpPacket();
+                handleArpPacket(inetLayerOffset);
                 break;
             default:
-                handleUnknownPacket();
+                handleUnknownPacket(inetLayerOffset);
         }
     }
 
-    protected void handleIpV4Packet() {
-        log.info("ipv4");
+    protected void handleIpV4Packet(final long offset) {
+        ipHdr.init(buffer, offset);
+        final long nextOffset = offset + ipHdr.hdr_len;
+        log.info("{}", ipHdr);
+
+        switch (ipHdr.protocol) {
+            case IPPROTO_TCP:
+                handleTcpPacket(nextOffset);
+        }
     }
 
-    protected void handleIpV6Packet() {
-        log.info("ipv6");
+    protected void handleIpV6Packet(final long offset) {
+//        log.info("ipv6");
     }
 
-    protected void handleArpPacket() {
-        log.info("arp");
+    protected void handleArpPacket(final long offset) {
+//        log.info("arp");
     }
 
-    protected void handleUnknownPacket() {
-        log.info("unknown packet: {}", ethHdr.h_proto);
+    protected void handleUnknownPacket(final long offset) {
+        log.info("unknown packet: {}", ethHdr.eth_type);
+    }
+
+    protected void handleTcpPacket(final long offset) {
+        tcpHdr.init(buffer, offset);
+        log.info("{}", tcpHdr);
     }
 }

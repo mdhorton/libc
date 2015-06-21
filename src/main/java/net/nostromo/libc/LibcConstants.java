@@ -6,13 +6,25 @@ public interface LibcConstants {
 
     Libc LIBC = (Libc) Native.loadLibrary("c", Libc.class);
 
+    byte ZERO_BYTE = (byte) 0;
+    byte ZERO_SHORT = (short) 0;
+
+    byte IPPROTO_ICMP = 1;
+    byte IPPROTO_IGMP = 2;
+    byte IPPROTO_TCP = 6;
+    byte IPPROTO_UDP = 17;
+    byte IPPROTO_MTP = 92;
+
     int PF_PACKET = 17;
     int SOCK_RAW = 3;
 
+    int ETH_HLEN = 14;
+
     int ETH_P_ALL = 0x0003;
     int ETH_P_IP = 0x0800;
-    int ETH_P_ARP = 0x0806;
     int ETH_P_IPV6 = 0x86DD;
+    int ETH_P_ARP = 0x0806;
+    int ETH_P_RARP = 0x8035;
 
     int SOL_PACKET = 263;
     int PACKET_VERSION = 10;
@@ -79,10 +91,4 @@ public interface LibcConstants {
 
     // different definitions on various headers
     int __NR_gettid = 186;
-
-    int SIZE_OF_INT = Native.getNativeSize(Integer.class);
-
-    static short htons(final short val) {
-        return Short.reverseBytes(val);
-    }
 }
