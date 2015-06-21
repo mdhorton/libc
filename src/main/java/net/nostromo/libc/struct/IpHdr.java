@@ -6,6 +6,7 @@ import net.nostromo.libc.Util;
 public class IpHdr extends JavaStruct {
 
     // total 20 bytes
+    // can have up to 40 more bytes of optional headers
     public byte version;   // 4
     public byte hdr_len;   // 4
     public byte dscp;      // 6
@@ -24,22 +25,22 @@ public class IpHdr extends JavaStruct {
     void init(final NativeHeapBuffer buffer) {
         {
             final byte b = buffer.getByte();
-            version = (byte) ((b >>> 4) & 0xF); // shift right 4, get 4
-            hdr_len = (byte) (b & 0xF);         // get 4 (then multiply by 4)
+            version = (byte) ((b >>> 4) & 0xF); // shift right 4 bits, get 4 bits
+            hdr_len = (byte) (b & 0xF);         // get 4 bits
         }
 
         {
             final byte b = buffer.getByte();
-            dscp = (byte) ((b >>> 2) & 0x3F);   // shift right 2, get 6
-            ecn = (byte) (b & 0x3);             // get 2
+            dscp = (byte) ((b >>> 2) & 0x3F);   // shift right 2 bits, get 6 bits
+            ecn = (byte) (b & 0x3);             // get 2 bits
         }
 
         tot_len = buffer.getNetworkShort();
         id = buffer.getNetworkShort();
 
         final short s = buffer.getNetworkShort();
-        flags = (byte) ((s >>> 13) & 0x7); // shift right 13, get 3
-        frag_off = (short) (s & 0x1FFF);   // get 13
+        flags = (byte) ((s >>> 13) & 0x7); // shift right 13 bits, get 3 bits
+        frag_off = (short) (s & 0x1FFF);   // get 13 bits
 
         ttl = buffer.getByte();
         protocol = buffer.getByte();
@@ -47,7 +48,8 @@ public class IpHdr extends JavaStruct {
         src_ip = buffer.getNetworkInt();
         dst_ip = buffer.getNetworkInt();
 
-        // hdr_len is in 4 byte words, so we must multiply by 4
+        // hdr_len specifies the number of 32-bit (4 byte) words,
+        // so we must multiply by 4 to get the total number of bytes
         hdr_len *= 4;
     }
 
