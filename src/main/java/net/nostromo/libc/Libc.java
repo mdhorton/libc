@@ -20,9 +20,10 @@ package net.nostromo.libc;
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Library;
 import com.sun.jna.Pointer;
-import net.nostromo.libc.c.cpu_set_t;
-import net.nostromo.libc.c.pollfd;
-import net.nostromo.libc.c.sockaddr;
+import net.nostromo.libc.struct.c.cpu_set_t;
+import net.nostromo.libc.struct.c.ifreq;
+import net.nostromo.libc.struct.c.pollfd;
+import net.nostromo.libc.struct.c.sockaddr;
 
 public interface Libc extends Library {
 
@@ -59,6 +60,8 @@ public interface Libc extends Library {
     int getpid() throws LastErrorException;
 
     long syscall(long sysno) throws LastErrorException;
+
+    int ioctl(int fd, long request, ifreq ifreq) throws LastErrorException;
 
     String strerror(int errno) throws LastErrorException;
 }

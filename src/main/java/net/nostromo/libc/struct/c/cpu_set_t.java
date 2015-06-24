@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.c;
+package net.nostromo.libc.struct.c;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.Structure;

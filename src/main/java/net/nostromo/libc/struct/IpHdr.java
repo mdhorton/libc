@@ -40,17 +40,15 @@ public class IpHdr extends JavaStruct {
 
     @Override
     void init(final NativeHeapBuffer buffer) {
-        {
-            final byte b = buffer.getByte();
-            version = (byte) ((b >>> 4) & 0xF); // shift right 4 bits, get 4 bits
-            hdr_len = (byte) (b & 0xF);         // get 4 bits
-        }
+        byte b;
 
-        {
-            final byte b = buffer.getByte();
-            dscp = (byte) ((b >>> 2) & 0x3F);   // shift right 2 bits, get 6 bits
-            ecn = (byte) (b & 0x3);             // get 2 bits
-        }
+        b = buffer.getByte();
+        version = (byte) ((b >>> 4) & 0xF); // shift right 4 bits, get 4 bits
+        hdr_len = (byte) (b & 0xF);         // get 4 bits
+
+        b = buffer.getByte();
+        dscp = (byte) ((b >>> 2) & 0x3F);   // shift right 2 bits, get 6 bits
+        ecn = (byte) (b & 0x3);             // get 2 bits
 
         tot_len = buffer.getNetworkShort();
         id = buffer.getNetworkShort();

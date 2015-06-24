@@ -17,7 +17,7 @@
 
 package net.nostromo.libc;
 
-import net.nostromo.libc.c.pollfd;
+import net.nostromo.libc.struct.c.pollfd;
 import net.nostromo.libc.struct.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,29 +56,40 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
         pollfd.revents = 0;
         pollfd.write();
 
+        final long statusOffset = 8;
         int blockIdx = 0;
 
         while (true) {
             final long blockStart = (long) blockSize * blockIdx;
-            final long blockStatusOffset = mmapAddress + blockStart + 8; // status is 8 bytes into the block
+            final long blockStatusOffset = mmapAddress + blockStart + statusOffset;
 
             buffer.refill(blockStart, TPacketBlockHdr.SIZE);
             blockHdr.init(buffer, 0);
 
             // poll the block until the kernel gives it back to user space
             while ((blockHdr.block_status & TP_STATUS_USER) == 0) {
-                LIBC.poll(pollfd, 1, -1);
+                libc.poll(pollfd, 1, -1);
                 buffer.refill(blockStart, TPacketBlockHdr.SIZE);
                 blockHdr.init(buffer, 0);
             }
 
-            // fill the heap buffer from the off-heap memory
-            buffer.refill(blockStart, Integer.toUnsignedLong(blockHdr.block_len));
-            blockHdr.init(buffer, 0);
+            final long loopCnt = 1;
+            final long start = System.nanoTime();
+            for (long x = 0; x < loopCnt; x++) {
+                // fill the heap buffer from the off-heap memory
+                buffer.refill(blockStart, Integer.toUnsignedLong(blockHdr.block_len));
+                blockHdr.init(buffer, 0);
 
-            // TODO: chk_sum block status
+                // TODO: check block status
 
-            walkBlock(blockHdr);
+                walkBlock(blockHdr);
+            }
+//            final long elap = System.nanoTime() - start;
+//            log.info(String.format("millis: %,.3f  cnt: %,d  pkt/sec: %,.0f  avg pkt sz: %,.0f",
+//                    elap / 1_000_000.0,
+//                    blockHdr.num_packets * loopCnt,
+//                    (blockHdr.num_packets * loopCnt) / (elap / 1_000_000_000.0),
+//                    blockHdr.block_len / (double) blockHdr.num_packets));
 
             // return the block to the kernel
             unsafe.putInt(blockStatusOffset, TP_STATUS_KERNEL);
@@ -90,22 +101,18 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
     }
 
     protected void walkBlock(final TPacketBlockHdr blockHdr) {
-        log.info("{}", blockHdr);
-        long linkLayerOffset = blockHdr.offset_to_first_pkt;
+        long tp3HdrOffset = blockHdr.offset_to_first_pkt;
 
         for (int idx = 0; idx < blockHdr.num_packets; idx++) {
-            tp3Hdr.init(buffer, linkLayerOffset);
-            log.info("{}", tp3Hdr);
-            handlePacket(linkLayerOffset);
-            linkLayerOffset += tp3Hdr.tp_next_offset;
+            tp3Hdr.init(buffer, tp3HdrOffset);
+            handleEthernetPacket(tp3HdrOffset + tp3Hdr.tp_mac);
+            tp3HdrOffset += tp3Hdr.tp_next_offset;
         }
     }
 
-    protected void handlePacket(final long linkLayerOffset) {
-        long inetLayerOffset = linkLayerOffset + tp3Hdr.tp_mac;
-        ethHdr.init(buffer, inetLayerOffset);
-        inetLayerOffset += ETH_HLEN;
-        log.info("{}", ethHdr);
+    protected void handleEthernetPacket(final long linkLayerOffset) {
+        ethHdr.init(buffer, linkLayerOffset);
+        final long inetLayerOffset = linkLayerOffset + EthHdr.SIZE;
 
         switch (Short.toUnsignedInt(ethHdr.eth_type)) {
             case ETH_P_IP:
@@ -117,6 +124,9 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
             case ETH_P_ARP:
                 handleArpPacket(inetLayerOffset);
                 break;
+            case ETH_P_RARP:
+                handleRarpPacket(inetLayerOffset);
+                break;
             default:
                 handleUnknownPacket(inetLayerOffset);
         }
@@ -125,7 +135,6 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
     protected void handleIpV4Packet(final long offset) {
         ipHdr.init(buffer, offset);
         final long nextOffset = offset + ipHdr.hdr_len;
-        log.info("{}", ipHdr);
 
         switch (ipHdr.protocol) {
             case IPPROTO_TCP:
@@ -141,12 +150,15 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
 //        log.info("arp");
     }
 
+    protected void handleRarpPacket(final long offset) {
+//        log.info("arp");
+    }
+
     protected void handleUnknownPacket(final long offset) {
-        log.info("unknown packet: {}", ethHdr.eth_type);
+        log.info("unknown ether type: {}", ethHdr);
     }
 
     protected void handleTcpPacket(final long offset) {
         tcpHdr.init(buffer, offset);
-        log.info("{}", tcpHdr);
     }
 }

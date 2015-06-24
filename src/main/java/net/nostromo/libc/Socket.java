@@ -18,20 +18,65 @@
 package net.nostromo.libc;
 
 import com.sun.jna.Structure;
-import net.nostromo.libc.c.sockaddr;
+import net.nostromo.libc.struct.c.ifreq;
+import net.nostromo.libc.struct.c.sockaddr;
 
 public class Socket implements LibcConstants {
 
     protected final int fd;
 
     public Socket(final int domain, final int type, final int protocol) {
-        fd = LIBC.socket(domain, type, Util.htons((short) protocol));
+        fd = libc.socket(domain, type, Util.htons((short) protocol));
     }
 
     public void bind(final Structure struct) {
         final sockaddr sa = new sockaddr(struct.getPointer());
         sa.read();
-        LIBC.bind(fd, sa, struct.size());
+        libc.bind(fd, sa, struct.size());
+    }
+
+    public void enablePromiscuousMode(final String ifname) {
+        final byte[] src = ifname.getBytes();
+        final byte[] dst = new byte[16];
+        System.arraycopy(src, 0, dst, 0, src.length);
+
+        final ifreq ifreq = new ifreq();
+        ifreq.ifr_ifrn = new ifreq.ifr_ifrn_union(dst);
+
+        libc.ioctl(fd, SIOCGIFFLAGS, ifreq);
+
+        System.out.println(ifreq.ifr_ifru.ifru_mtu);
+
+        // is it already enabled?
+        if ((ifreq.ifr_ifru.ifru_flags & IFF_PROMISC) != 0) {
+            return;
+        }
+
+        System.out.println(ifreq.ifr_ifru.ifru_flags & IFF_PROMISC);
+
+        ifreq.ifr_ifru.ifru_flags |= IFF_PROMISC;
+        libc.ioctl(fd, SIOCSIFFLAGS, ifreq);
+    }
+
+    public void disablePromiscuousMode(final String ifname) {
+        final byte[] src = ifname.getBytes();
+        final byte[] dst = new byte[16];
+        System.arraycopy(src, 0, dst, 0, src.length);
+
+        final ifreq ifreq = new ifreq();
+        ifreq.ifr_ifrn = new ifreq.ifr_ifrn_union(dst);
+
+        libc.ioctl(fd, SIOCGIFFLAGS, ifreq);
+
+        System.out.println(ifreq.ifr_ifru.ifru_flags & IFF_PROMISC);
+
+        // is it already disabled?
+        if ((ifreq.ifr_ifru.ifru_flags & IFF_PROMISC) == 0) {
+            return;
+        }
+
+        ifreq.ifr_ifru.ifru_flags &= ~IFF_PROMISC;
+        libc.ioctl(fd, SIOCSIFFLAGS, ifreq);
     }
 
     public int getFd() {

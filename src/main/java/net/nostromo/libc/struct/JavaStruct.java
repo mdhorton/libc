@@ -21,7 +21,7 @@ import net.nostromo.libc.NativeHeapBuffer;
 
 public abstract class JavaStruct {
 
-    public void init(NativeHeapBuffer buffer, long offset) {
+    public void init(final NativeHeapBuffer buffer, final long offset) {
         buffer.setOffset(offset);
         init(buffer);
     }

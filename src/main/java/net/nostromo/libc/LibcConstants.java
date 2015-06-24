@@ -21,7 +21,7 @@ import com.sun.jna.Native;
 
 public interface LibcConstants {
 
-    Libc LIBC = (Libc) Native.loadLibrary("c", Libc.class);
+    Libc libc = (Libc) Native.loadLibrary("c", Libc.class);
 
     byte ZERO_BYTE = (byte) 0;
     byte ZERO_SHORT = (short) 0;
@@ -50,12 +50,6 @@ public interface LibcConstants {
     int PACKET_RX_RING = 5;
     int TP_FT_REQ_FILL_RXHASH = 0x1;
 
-    int PROT_READ = 0x1;
-    int PROT_WRITE = 0x2;
-
-    int MAP_SHARED = 0x01;
-    int MAP_LOCKED = 0x02000;
-    int MAP_NORESERVE = 0x04000;
 
     int PACKET_FANOUT = 18;
     int PACKET_FANOUT_HASH = 0;
@@ -67,11 +61,20 @@ public interface LibcConstants {
     int PACKET_FANOUT_FLAG_ROLLOVER = 0x1000;
     int PACKET_FANOUT_FLAG_DEFRAG = 0x8000;
 
+    int TP_STATUS_KERNEL = 0;
+    int TP_STATUS_USER = 1;
+
+    // poll
     int POLLIN = 0x001;
     int POLLERR = 0x008;
 
-    int TP_STATUS_KERNEL = 0;
-    int TP_STATUS_USER = 1;
+    // mmap
+    int PROT_READ = 0x1;
+    int PROT_WRITE = 0x2;
+
+    int MAP_SHARED = 0x01;
+    int MAP_LOCKED = 0x02000;
+    int MAP_NORESERVE = 0x04000;
 
     // file open flags
     int O_RDONLY = 00;
@@ -105,6 +108,12 @@ public interface LibcConstants {
     int SEEK_DATA = 3;
     int SEEK_HOLE = 4;
     int SEEK_MAX = SEEK_HOLE;
+
+    // ioctl
+    int SIOCGIFFLAGS = 0x8913;
+    int SIOCSIFFLAGS = 0x8914;
+
+    int IFF_PROMISC = 0x100;
 
     // different definitions on various headers
     int __NR_gettid = 186;

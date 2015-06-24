@@ -22,6 +22,8 @@ import net.nostromo.libc.Util;
 
 public class EthHdr extends JavaStruct {
 
+    public static final long SIZE = 14;
+
     // total 14 bytes
     public byte[] dst_mac = new byte[6]; // 8[6]
     public byte[] src_mac = new byte[6]; // 8[6]

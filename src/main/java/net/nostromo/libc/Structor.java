@@ -17,8 +17,8 @@
 
 package net.nostromo.libc;
 
-import net.nostromo.libc.c.sockaddr_ll;
-import net.nostromo.libc.c.tpacket_req3;
+import net.nostromo.libc.struct.c.sockaddr_ll;
+import net.nostromo.libc.struct.c.tpacket_req3;
 
 public class Structor implements LibcConstants {
 
@@ -32,7 +32,7 @@ public class Structor implements LibcConstants {
 
         saLink.sll_family = linkFamily;
         saLink.sll_protocol = Util.htons((short) protocol);
-        saLink.sll_ifindex = LIBC.if_nametoindex(ifname);
+        saLink.sll_ifindex = libc.if_nametoindex(ifname);
         saLink.sll_hatype = hatype;
         saLink.sll_pkttype = pkttype;
         saLink.sll_halen = halen;

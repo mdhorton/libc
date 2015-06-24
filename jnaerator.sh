@@ -5,7 +5,7 @@ rm -fr jnaerator
 java -jar jnaerator-0.13-SNAPSHOT-shaded.jar -runtime JNA -mode Directory \
     -f \
     -o jnaerator \
-    -package net.nostromo.libc.c \
+    -package net.nostromo.libc.struct.c \
     -library c \
     -I/usr/include \
     /usr/include/linux/if_packet.h \
