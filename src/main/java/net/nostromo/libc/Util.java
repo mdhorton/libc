@@ -31,7 +31,7 @@ public class Util {
         return Short.reverseBytes(val);
     }
 
-    public static String inetNtoa(final int address) {
+    public static String inetNtoA(final int address) {
         return ((address >>> 24) & 0xFF) + "." +
                 ((address >>> 16) & 0xFF) + "." +
                 ((address >>> 8) & 0xFF) + "." +

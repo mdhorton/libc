@@ -23,21 +23,28 @@ import java.math.BigInteger;
 
 public class TPacketBlockHdr extends JavaStruct {
 
+    // total 40 bytes
     public static final int SIZE = 40;
 
-    // total 40 bytes
-    public int version;             // 32
-    public int offset_to_priv;      // 32
-    public int block_status;        // 32
-    public int num_packets;         // 32
-    public int offset_to_first_pkt; // 32
-    public int block_len;           // 32
-    public long seq_num;            // 64
-    public int ts_sec;              // 32
-    public int ts_un_sec;           // 32
+    // tpacket_block_desc (linux/if_packet.h)
+    public int version;             // u32
+    public int offset_to_priv;      // u32
+
+    // union tpacket_bd_header_u -> tpacket_hdr_v1
+    public int block_status;        // u32
+    public int num_packets;         // u32
+    public int offset_to_first_pkt; // u32
+    public int block_len;           // u32
+    public long seq_num;            // u64
+
+    // tpacket_bd_ts
+    public int first_ts_sec;        // u32
+    public int first_ts_un_sec;     // u32
+    public int last_ts_sec;         // u32
+    public int last_ts_un_sec;      // u32
 
     @Override
-    void init(final NativeHeapBuffer buffer) {
+    void read(final NativeHeapBuffer buffer) {
         version = buffer.getInt();
         offset_to_priv = buffer.getInt();
         block_status = buffer.getInt();
@@ -45,21 +52,40 @@ public class TPacketBlockHdr extends JavaStruct {
         offset_to_first_pkt = buffer.getInt();
         block_len = buffer.getInt();
         seq_num = buffer.getLong();
-        ts_sec = buffer.getInt();
-        ts_un_sec = buffer.getInt();
+        first_ts_sec = buffer.getInt();
+        first_ts_un_sec = buffer.getInt();
+        last_ts_sec = buffer.getInt();
+        last_ts_un_sec = buffer.getInt();
+    }
+
+    @Override
+    void write(final NativeHeapBuffer buffer) {
+        buffer.setInt(version);
+        buffer.setInt(offset_to_priv);
+        buffer.setInt(block_status);
+        buffer.setInt(num_packets);
+        buffer.setInt(offset_to_first_pkt);
+        buffer.setInt(block_len);
+        buffer.setLong(seq_num);
+        buffer.setInt(first_ts_sec);
+        buffer.setInt(first_ts_un_sec);
+        buffer.setInt(last_ts_sec);
+        buffer.setInt(last_ts_un_sec);
     }
 
     @Override
     public String toString() {
-        return "TP_BLOCK_HDR" +
-                "  version: " + Integer.toUnsignedLong(version) +
-                "  offset_to_priv: " + Integer.toUnsignedLong(offset_to_priv) +
-                "  block_status: " + Integer.toUnsignedLong(block_status) +
-                "  num_packets: " + Integer.toUnsignedLong(num_packets) +
-                "  offset_to_first_pkt: " + Integer.toUnsignedLong(offset_to_first_pkt) +
-                "  block_len: " + Integer.toUnsignedLong(block_len) +
-                "  seq_num: " + BigInteger.valueOf(seq_num) +
-                "  ts_sec: " + Integer.toUnsignedLong(ts_sec) +
-                "  ts_un_sec: " + Integer.toUnsignedLong(ts_un_sec);
+        return String.format("ver: %d  priv: %d  status: %d  cnt: %d  offset: %d  len: %d  seq: %d  %d.%d -> %d.%d",
+                Integer.toUnsignedLong(version),
+                Integer.toUnsignedLong(offset_to_priv),
+                Integer.toUnsignedLong(block_status),
+                Integer.toUnsignedLong(num_packets),
+                Integer.toUnsignedLong(offset_to_first_pkt),
+                Integer.toUnsignedLong(block_len),
+                BigInteger.valueOf(seq_num),
+                Integer.toUnsignedLong(first_ts_sec),
+                Integer.toUnsignedLong(first_ts_un_sec),
+                Integer.toUnsignedLong(last_ts_sec),
+                Integer.toUnsignedLong(last_ts_un_sec));
     }
 }

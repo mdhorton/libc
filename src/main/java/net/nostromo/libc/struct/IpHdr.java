@@ -24,22 +24,26 @@ public class IpHdr extends JavaStruct {
 
     // total 20 bytes
     // can have up to 40 more bytes of optional headers
-    public byte version;   // 4
-    public byte hdr_len;   // 4
-    public byte dscp;      // 6
-    public byte ecn;       // 2
-    public short tot_len;  // 16
-    public short id;       // 16
-    public byte flags;     // 3
-    public short frag_off; // 13
-    public byte ttl;       // 8
-    public byte protocol;  // 8
-    public short chk_sum;  // 16
-    public int src_ip;     // 32
-    public int dst_ip;     // 32
+
+    // iphdr (netinet/ip.h)
+    public byte version;   // u8:4
+    public byte hdr_len;   // u8:4
+    public byte dscp;      // u8:6
+    public byte ecn;       // u8:2
+    public short tot_len;  // ube16
+    public short id;       // ube16
+    public byte flags;     // ube16:3
+    public short frag_off; // ube16:13
+    public byte ttl;       // u8
+    public byte protocol;  // u8
+    public short chk_sum;  // ube16
+    public int src_ip;     // ube32
+    public int dst_ip;     // ube32
+
+    public int hdr_len_bytes;
 
     @Override
-    void init(final NativeHeapBuffer buffer) {
+    void read(final NativeHeapBuffer buffer) {
         byte b;
 
         b = buffer.getByte();
@@ -65,25 +69,40 @@ public class IpHdr extends JavaStruct {
 
         // hdr_len specifies the number of 32-bit (4 byte) words,
         // so we must multiply by 4 to get the total number of bytes
-        hdr_len *= 4;
+        hdr_len_bytes = hdr_len * 4;
+    }
+
+    @Override
+    void write(final NativeHeapBuffer buffer) {
+        buffer.setByte((byte) (version << 4 | hdr_len));
+        buffer.setByte((byte) (dscp << 2 | ecn));
+
+        buffer.setNetworkShort(tot_len);
+        buffer.setNetworkShort(id);
+
+        buffer.setNetworkShort((short) (flags << 13 | frag_off));
+
+        buffer.setByte(ttl);
+        buffer.setByte(protocol);
+        buffer.setNetworkShort(chk_sum);
+        buffer.setNetworkInt(src_ip);
+        buffer.setNetworkInt(dst_ip);
     }
 
     @Override
     public String toString() {
-        return "      " +
-                "IP_HDR" +
-                "  version: " + version +
-                "  hdr_len: " + hdr_len +
-                "  dscp: " + dscp +
-                "  ecn: " + ecn +
-                "  tot_len: " + Short.toUnsignedInt(tot_len) +
-                "  id: " + Short.toUnsignedInt(id) +
-                "  flags: " + flags +
-                "  frag_off: " + frag_off +
-                "  ttl: " + Byte.toUnsignedInt(ttl) +
-                "  protocol: " + Byte.toUnsignedInt(protocol) +
-                "  chk_sum: " + Short.toUnsignedInt(chk_sum) +
-                "  src_ip: " + Util.inetNtoa(src_ip) +
-                "  dst_ip: " + Util.inetNtoa(dst_ip);
+        return String.format("%s -> %s  ver: %d  len: %d (%d)  dscp: %d  ecn: %d  id: %d  " +
+                        "flags: %d  frag: %d  ttl: %d  proto: %d  chksum: %d",
+                Util.inetNtoA(src_ip), Util.inetNtoA(dst_ip),
+                version,
+                Short.toUnsignedInt(tot_len), hdr_len,
+                dscp,
+                ecn,
+                Short.toUnsignedInt(id),
+                flags,
+                frag_off,
+                Byte.toUnsignedInt(ttl),
+                Byte.toUnsignedInt(protocol),
+                Short.toUnsignedInt(chk_sum));
     }
 }

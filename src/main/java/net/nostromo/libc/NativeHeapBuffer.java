@@ -21,55 +21,100 @@ import sun.misc.Unsafe;
 
 public class NativeHeapBuffer {
 
-    protected static final Unsafe UNSAFE = TheUnsafe.UNSAFE;
-    protected static final long BYTE_ARRAY_OFFSET = UNSAFE.arrayBaseOffset(byte[].class);
+    protected static final Unsafe unsafe = TheUnsafe.unsafe;
 
     protected final byte[] buffer;
     protected final int bufferSize;
-    protected final long pointerAddress;
+    protected final long nativePointer;
 
-    protected long bufferOffset = BYTE_ARRAY_OFFSET;
+    protected int bufferOffset;
 
-    public NativeHeapBuffer(final int bufferSize, final long pointerAddress) {
+    public NativeHeapBuffer(final int bufferSize, final long nativePointer) {
         this.buffer = new byte[bufferSize];
         this.bufferSize = bufferSize;
-        this.pointerAddress = pointerAddress;
+        this.nativePointer = nativePointer;
     }
 
-    public void setOffset(final long offset) {
-        bufferOffset = BYTE_ARRAY_OFFSET + offset;
+    public void setOffset(final int offset) {
+        bufferOffset = offset;
     }
 
-    public void refill(final long offset) {
-        refill(offset, bufferSize);
+    public void read(final long offset) {
+        read(offset, bufferSize);
     }
 
-    public void refill(final long offset, final long length) {
-        UNSAFE.copyMemory(null, pointerAddress + offset, buffer, BYTE_ARRAY_OFFSET, length);
-        bufferOffset = BYTE_ARRAY_OFFSET;
+    public void read(final long offset, final long length) {
+        unsafe.copyMemory(null, nativePointer + offset, buffer, Unsafe.ARRAY_BYTE_BASE_OFFSET, length);
     }
+
+    public void write(final long offset) {
+        write(offset, bufferSize);
+    }
+
+    public void write(final long offset, final long length) {
+        unsafe.copyMemory(buffer, Unsafe.ARRAY_BYTE_BASE_OFFSET, null, nativePointer + offset, length);
+    }
+
+    // BYTE[]
 
     public void getBytes(final byte[] bytes) {
-        System.arraycopy(buffer, (int) (bufferOffset - BYTE_ARRAY_OFFSET), bytes, 0, bytes.length);
+        getBytes(bufferOffset, bytes);
         bufferOffset += bytes.length;
     }
 
+    public void setBytes(final byte[] bytes) {
+        setBytes(bufferOffset, bytes);
+        bufferOffset += bytes.length;
+    }
+
+    public void getBytes(final int offset, final byte[] bytes) {
+        System.arraycopy(buffer, offset, bytes, 0, bytes.length);
+    }
+
+    public void setBytes(final int offset, final byte[] bytes) {
+        System.arraycopy(bytes, 0, buffer, offset, bytes.length);
+    }
+
+    // BYTE
+
     public byte getByte() {
-        return buffer[(int) (bufferOffset++ - BYTE_ARRAY_OFFSET)];
+        final byte b = getByte(bufferOffset);
+        bufferOffset++;
+        return b;
+    }
+
+    public void setByte(final byte b) {
+        setByte(bufferOffset, b);
+        bufferOffset++;
     }
 
     public byte getByte(final int offset) {
         return buffer[offset];
     }
 
+    public void setByte(final int offset, final byte b) {
+        buffer[offset] = b;
+    }
+
+    // SHORT
+
     public short getShort() {
-        final short val = UNSAFE.getShort(buffer, bufferOffset);
+        final short val = getShort(bufferOffset);
         bufferOffset += 2;
         return val;
     }
 
+    public void setShort(final short s) {
+        setShort(bufferOffset, s);
+        bufferOffset += 2;
+    }
+
     public short getShort(final int offset) {
-        return UNSAFE.getShort(buffer, BYTE_ARRAY_OFFSET + offset);
+        return unsafe.getShort(buffer, (long) offset + Unsafe.ARRAY_BYTE_BASE_OFFSET);
+    }
+
+    public void setShort(final int offset, final short s) {
+        unsafe.putShort(buffer, (long) offset + Unsafe.ARRAY_BYTE_BASE_OFFSET, s);
     }
 
     public short getNetworkShort() {
@@ -77,14 +122,30 @@ public class NativeHeapBuffer {
         else return Short.reverseBytes(getShort());
     }
 
+    public void setNetworkShort(final short s) {
+        if (Util.BIG_ENDIAN) setShort(s);
+        else setShort(Short.reverseBytes(s));
+    }
+
+    // INTEGER
+
     public int getInt() {
-        final int val = UNSAFE.getInt(buffer, bufferOffset);
+        final int val = getInt(bufferOffset);
         bufferOffset += 4;
         return val;
     }
 
+    public void setInt(final int i) {
+        setInt(bufferOffset, i);
+        bufferOffset += 4;
+    }
+
     public int getInt(final int offset) {
-        return UNSAFE.getInt(buffer, BYTE_ARRAY_OFFSET + offset);
+        return unsafe.getInt(buffer, (long) offset + Unsafe.ARRAY_BYTE_BASE_OFFSET);
+    }
+
+    public void setInt(final int offset, final int i) {
+        unsafe.putInt(buffer, (long) offset + Unsafe.ARRAY_BYTE_BASE_OFFSET, i);
     }
 
     public int getNetworkInt() {
@@ -92,18 +153,39 @@ public class NativeHeapBuffer {
         else return Integer.reverseBytes(getInt());
     }
 
+    public void setNetworkInt(final int i) {
+        if (Util.BIG_ENDIAN) setInt(i);
+        else setInt(Integer.reverseBytes(i));
+    }
+
+    // LONG
+
     public long getLong() {
-        final long val = UNSAFE.getLong(buffer, bufferOffset);
+        final long val = getLong(bufferOffset);
         bufferOffset += 8;
         return val;
     }
 
+    public void setLong(final long l) {
+        setLong(bufferOffset, l);
+        bufferOffset += 8;
+    }
+
     public long getLong(final int offset) {
-        return UNSAFE.getLong(buffer, BYTE_ARRAY_OFFSET + offset);
+        return unsafe.getLong(buffer, (long) offset + Unsafe.ARRAY_BYTE_BASE_OFFSET);
+    }
+
+    public void setLong(final int offset, final long l) {
+        unsafe.putLong(buffer, (long) offset + Unsafe.ARRAY_BYTE_BASE_OFFSET, l);
     }
 
     public long getNetworkLong() {
         if (Util.BIG_ENDIAN) return getLong();
         else return Long.reverseBytes(getLong());
+    }
+
+    public void setNetworkLong(final long l) {
+        if (Util.BIG_ENDIAN) setLong(l);
+        else setLong(Long.reverseBytes(l));
     }
 }

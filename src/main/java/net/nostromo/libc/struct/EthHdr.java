@@ -22,26 +22,30 @@ import net.nostromo.libc.Util;
 
 public class EthHdr extends JavaStruct {
 
-    public static final long SIZE = 14;
-
     // total 14 bytes
-    public byte[] dst_mac = new byte[6]; // 8[6]
-    public byte[] src_mac = new byte[6]; // 8[6]
-    public short eth_type;               // 16
+    public static final int SIZE = 14;
+
+    // ethhdr (linux/if_ether.h)
+    public byte[] dst_mac = new byte[6]; // u8[6]
+    public byte[] src_mac = new byte[6]; // u8[6]
+    public short eth_type;               // ube16
 
     @Override
-    void init(final NativeHeapBuffer buffer) {
+    void read(final NativeHeapBuffer buffer) {
         buffer.getBytes(dst_mac);
         buffer.getBytes(src_mac);
         eth_type = buffer.getNetworkShort();
     }
 
     @Override
+    void write(final NativeHeapBuffer buffer) {
+        buffer.setBytes(dst_mac);
+        buffer.setBytes(src_mac);
+        buffer.setNetworkShort(eth_type);
+    }
+
+    @Override
     public String toString() {
-        return "    " +
-                "ETH_HDR" +
-                "  dst_mac: " + Util.bytesToMac(dst_mac) +
-                "  src_mac: " + Util.bytesToMac(src_mac) +
-                "  eth_type: " + Short.toUnsignedInt(eth_type);
+        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
     }
 }

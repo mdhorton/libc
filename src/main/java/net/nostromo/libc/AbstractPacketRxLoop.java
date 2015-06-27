@@ -17,8 +17,8 @@
 
 package net.nostromo.libc;
 
-import net.nostromo.libc.struct.c.pollfd;
 import net.nostromo.libc.struct.*;
+import net.nostromo.libc.struct.c.pollfd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.Unsafe;
@@ -26,7 +26,7 @@ import sun.misc.Unsafe;
 public abstract class AbstractPacketRxLoop implements LibcConstants {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    protected final Unsafe unsafe = TheUnsafe.UNSAFE;
+    protected final Unsafe unsafe = TheUnsafe.unsafe;
 
     protected final TPacket3Hdr tp3Hdr = new TPacket3Hdr();
     protected final EthHdr ethHdr = new EthHdr();
@@ -63,22 +63,23 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
             final long blockStart = (long) blockSize * blockIdx;
             final long blockStatusOffset = mmapAddress + blockStart + statusOffset;
 
-            buffer.refill(blockStart, TPacketBlockHdr.SIZE);
-            blockHdr.init(buffer, 0);
+            buffer.read(blockStart, TPacketBlockHdr.SIZE);
+            blockHdr.read(buffer, 0);
 
             // poll the block until the kernel gives it back to user space
             while ((blockHdr.block_status & TP_STATUS_USER) == 0) {
                 libc.poll(pollfd, 1, -1);
-                buffer.refill(blockStart, TPacketBlockHdr.SIZE);
-                blockHdr.init(buffer, 0);
+                buffer.read(blockStart, TPacketBlockHdr.SIZE);
+                blockHdr.read(buffer, 0);
             }
 
             final long loopCnt = 1;
             final long start = System.nanoTime();
             for (long x = 0; x < loopCnt; x++) {
                 // fill the heap buffer from the off-heap memory
-                buffer.refill(blockStart, Integer.toUnsignedLong(blockHdr.block_len));
-                blockHdr.init(buffer, 0);
+                buffer.read(blockStart, Integer.toUnsignedLong(blockHdr.block_len));
+                blockHdr.read(buffer, 0);
+                log.info("\n{}", blockHdr);
 
                 // TODO: check block status
 
@@ -101,18 +102,20 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
     }
 
     protected void walkBlock(final TPacketBlockHdr blockHdr) {
-        long tp3HdrOffset = blockHdr.offset_to_first_pkt;
+        int tp3HdrOffset = blockHdr.offset_to_first_pkt;
 
         for (int idx = 0; idx < blockHdr.num_packets; idx++) {
-            tp3Hdr.init(buffer, tp3HdrOffset);
+            tp3Hdr.read(buffer, tp3HdrOffset);
+            log.info("\n{}", tp3Hdr);
             handleEthernetPacket(tp3HdrOffset + tp3Hdr.tp_mac);
             tp3HdrOffset += tp3Hdr.tp_next_offset;
         }
     }
 
-    protected void handleEthernetPacket(final long linkLayerOffset) {
-        ethHdr.init(buffer, linkLayerOffset);
-        final long inetLayerOffset = linkLayerOffset + EthHdr.SIZE;
+    protected void handleEthernetPacket(final int linkLayerOffset) {
+        ethHdr.read(buffer, linkLayerOffset);
+        log.info(ethHdr.toString());
+        final int inetLayerOffset = linkLayerOffset + EthHdr.SIZE;
 
         switch (Short.toUnsignedInt(ethHdr.eth_type)) {
             case ETH_P_IP:
@@ -128,13 +131,14 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
                 handleRarpPacket(inetLayerOffset);
                 break;
             default:
-                handleUnknownPacket(inetLayerOffset);
+                handleUnknownEtherType();
         }
     }
 
-    protected void handleIpV4Packet(final long offset) {
-        ipHdr.init(buffer, offset);
-        final long nextOffset = offset + ipHdr.hdr_len;
+    protected void handleIpV4Packet(final int offset) {
+        ipHdr.read(buffer, offset);
+        log.info(ipHdr.toString());
+        final int nextOffset = offset + ipHdr.hdr_len;
 
         switch (ipHdr.protocol) {
             case IPPROTO_TCP:
@@ -142,23 +146,23 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
         }
     }
 
-    protected void handleIpV6Packet(final long offset) {
+    protected void handleIpV6Packet(final int offset) {
 //        log.info("ipv6");
     }
 
-    protected void handleArpPacket(final long offset) {
+    protected void handleArpPacket(final int offset) {
 //        log.info("arp");
     }
 
-    protected void handleRarpPacket(final long offset) {
-//        log.info("arp");
+    protected void handleRarpPacket(final int offset) {
+//        log.info("rarp");
     }
 
-    protected void handleUnknownPacket(final long offset) {
-        log.info("unknown ether type: {}", ethHdr);
+    protected void handleUnknownEtherType() {
+        log.info("unknown ether type: {}", ethHdr.eth_type);
     }
 
-    protected void handleTcpPacket(final long offset) {
-        tcpHdr.init(buffer, offset);
+    protected void handleTcpPacket(final int offset) {
+        tcpHdr.read(buffer, offset);
     }
 }

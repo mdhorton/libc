@@ -23,13 +23,13 @@ import java.lang.reflect.Field;
 
 public class TheUnsafe {
 
-    public static final Unsafe UNSAFE;
+    public static final Unsafe unsafe;
 
     static {
         try {
             final Field field = Unsafe.class.getDeclaredField("theUnsafe");
             field.setAccessible(true);
-            UNSAFE = (Unsafe) field.get(null);
+            unsafe = (Unsafe) field.get(null);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
