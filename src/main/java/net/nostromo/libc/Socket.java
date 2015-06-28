@@ -18,8 +18,6 @@
 package net.nostromo.libc;
 
 import com.sun.jna.Structure;
-import net.nostromo.libc.struct.c.ifreq;
-import net.nostromo.libc.struct.c.sockaddr;
 
 public class Socket implements LibcConstants {
 

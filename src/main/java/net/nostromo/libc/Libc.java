@@ -20,10 +20,7 @@ package net.nostromo.libc;
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Library;
 import com.sun.jna.Pointer;
-import net.nostromo.libc.struct.c.cpu_set_t;
-import net.nostromo.libc.struct.c.ifreq;
 import net.nostromo.libc.struct.c.pollfd;
-import net.nostromo.libc.struct.c.sockaddr;
 
 public interface Libc extends Library {
 

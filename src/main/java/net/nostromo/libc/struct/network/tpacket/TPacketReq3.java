@@ -15,26 +15,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct.c;
+package net.nostromo.libc.struct.network.tpacket;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
+import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Struct;
 
-import java.util.Arrays;
-import java.util.List;
+// tpacket_req3 (linux/packet.h)
+public class TPacketReq3 extends Struct {
 
-public class sockaddr extends Structure {
+    // total bytes
+    public static final int SIZE = 24;
 
-    public short sa_family;
-    public byte[] sa_data = new byte[14];
+    public int tp_block_size;
+    public int tp_block_nr;
+    public int tp_frame_size;
+    public int tp_frame_nr;
+    public int tp_retire_blk_tov;
+    public int tp_sizeof_priv;
+    public int tp_feature_req_word;
 
-    public sockaddr() { }
-
-    public sockaddr(final Pointer p) {
-        super(p);
+    public TPacketReq3(final NativeHeapBuffer buffer) {
+        super(buffer);
     }
 
-    protected List<?> getFieldOrder() {
-        return Arrays.asList("sa_family", "sa_data");
+    @Override
+    public void read(final NativeHeapBuffer buffer) {
+
+    }
+
+    @Override
+    public void write(final NativeHeapBuffer buffer) {
+
     }
 }

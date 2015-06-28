@@ -15,43 +15,35 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.tpacket.header;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
 
-// ifreq (linux/if.h)
-public class IfReq extends Struct {
+// tpacket_hdr_variant1 (linux/if_packet.h)
+public class TPacketHdrVariant1 extends Struct {
 
     // total bytes
-    public static final int SIZE = IfReqRn.SIZE + IfReqRu.SIZE;
+    public static final int SIZE = 12;
 
-    public static final int IF_NAMESIZE = 16;
+    public int tp_rxhash;      // u32
+    public int tp_vlan_tci;    // u32
+    public short tp_vlan_tpid; // u16
+    public short tp_padding;   // u16
 
-    public IfReqRn ifrn;
-    public IfReqRu ifru;
-
-    public IfReq() {
-        super(SIZE);
-    }
-
-    public IfReq(final IfReqRn.Name rnName, final IfReqRu.Name ruName) {
-        this();
-        ifrn = new IfReqRn(buffer);
-        ifru = new IfReqRu(buffer);
-        ifrn.setFieldName(rnName);
-        ifru.setFieldName(ruName);
+    @Override
+    public void read(final NativeHeapBuffer buffer) {
+        tp_rxhash = buffer.getInt();
+        tp_vlan_tci = buffer.getInt();
+        tp_vlan_tpid = buffer.getShort();
+        tp_padding = buffer.getShort();
     }
 
     @Override
-    protected void read(final NativeHeapBuffer buffer) {
-        ifrn.read(buffer);
-        ifru.read(buffer);
-    }
-
-    @Override
-    protected void write(final NativeHeapBuffer buffer) {
-        ifrn.write(buffer);
-        ifru.write(buffer);
+    public void write(final NativeHeapBuffer buffer) {
+        buffer.setInt(tp_rxhash);
+        buffer.setInt(tp_vlan_tci);
+        buffer.setShort(tp_vlan_tpid);
+        buffer.setShort(tp_padding);
     }
 }

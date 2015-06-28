@@ -15,18 +15,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.header;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
 import net.nostromo.libc.Util;
 
+// iphdr (netinet/ip.h)
+// https://en.wikipedia.org/wiki/IPv4
 public class IpHdr extends Struct {
 
     // total 20 bytes
     // can have up to 40 more bytes of optional headers
 
-    // iphdr (netinet/ip.h)
     public byte version;   // u8:4
     public byte hdr_len;   // u8:4
     public byte dscp;      // u8:6
@@ -45,8 +46,12 @@ public class IpHdr extends Struct {
     // so we must multiply by 4 to get the total number of bytes
     public int hdr_len_bytes;
 
+    public IpHdr(final NativeHeapBuffer buffer) {
+        super(buffer);
+    }
+
     @Override
-    protected void read(final NativeHeapBuffer buffer) {
+    public void read(final NativeHeapBuffer buffer) {
         byte b;
 
         b = buffer.getByte();
@@ -74,7 +79,7 @@ public class IpHdr extends Struct {
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
+    public void write(final NativeHeapBuffer buffer) {
         buffer.setByte((byte) (version << 4 | hdr_len));
         buffer.setByte((byte) (dscp << 2 | ecn));
 

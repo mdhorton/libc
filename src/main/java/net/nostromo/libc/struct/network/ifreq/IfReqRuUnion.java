@@ -15,12 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.ifreq;
 
-import net.nostromo.libc.Union;
 import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Union;
+import net.nostromo.libc.struct.network.socket.SockAddr;
 
-public class IfReqRu extends Union {
+// ifreq (linux/if.h)
+public class IfReqRuUnion extends Union {
 
     // total bytes
     public static final int SIZE = 24;
@@ -42,12 +44,12 @@ public class IfReqRu extends Union {
     public byte[] newname;      // 8[IF_NAMESIZE]
     public long ptr_data;       // u64
 
-    public IfReqRu(final NativeHeapBuffer buffer) {
-        super(buffer);
+    public IfReqRuUnion(final Name name) {
+        setFieldName(name);
     }
 
     @Override
-    public void setFieldName(final FieldName unionField) {
+    public void setFieldName(final FieldName unionField, final boolean instantiateObjects) {
         this.fieldName = unionField;
 
         if (unionField == Name.ADDR) addr = new SockAddr();
@@ -61,7 +63,7 @@ public class IfReqRu extends Union {
     }
 
     @Override
-    protected void read(final NativeHeapBuffer buffer) {
+    public void read(final NativeHeapBuffer buffer) {
         if (fieldName == Name.ADDR) addr.read(buffer);
         else if (fieldName == Name.DSTADDR) dstaddr.read(buffer);
         else if (fieldName == Name.BROADADDR) broadaddr.read(buffer);
@@ -77,7 +79,7 @@ public class IfReqRu extends Union {
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
+    public void write(final NativeHeapBuffer buffer) {
         if (fieldName == Name.ADDR) addr.write(buffer);
         else if (fieldName == Name.DSTADDR) dstaddr.write(buffer);
         else if (fieldName == Name.BROADADDR) broadaddr.write(buffer);

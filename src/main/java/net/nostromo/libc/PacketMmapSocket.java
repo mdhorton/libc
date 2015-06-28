@@ -19,7 +19,6 @@ package net.nostromo.libc;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
-import net.nostromo.libc.struct.c.tpacket_req3;
 
 public class PacketMmapSocket extends Socket {
 

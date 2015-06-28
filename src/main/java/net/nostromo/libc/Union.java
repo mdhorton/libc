@@ -23,11 +23,21 @@ public abstract class Union extends Struct {
 
     protected FieldName fieldName;
 
+    public Union() {}
+
+    public Union(final boolean instantiateObjects) {
+        super(instantiateObjects);
+    }
+
     public Union(final NativeHeapBuffer buffer) {
         super(buffer);
     }
 
-    public abstract void setFieldName(FieldName fieldName);
+    public void setFieldName(FieldName fieldName) {
+        setFieldName(fieldName, instantiateObjects);
+    }
+
+    public abstract void setFieldName(FieldName fieldName, boolean instantiateObjects);
 
     public FieldName getFieldName() {
         return fieldName;

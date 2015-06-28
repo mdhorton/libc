@@ -17,8 +17,12 @@
 
 package net.nostromo.libc;
 
-import net.nostromo.libc.struct.*;
+import net.nostromo.libc.struct.network.header.EthHdr;
+import net.nostromo.libc.struct.network.header.IpHdr;
+import net.nostromo.libc.struct.network.header.TcpHdr;
 import net.nostromo.libc.struct.c.pollfd;
+import net.nostromo.libc.struct.network.tpacket.block.TPacketBlockDesc;
+import net.nostromo.libc.struct.network.tpacket.header.TPacket3Hdr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.Unsafe;

@@ -17,9 +17,9 @@
 
 package net.nostromo.libc;
 
-import net.nostromo.libc.struct.IfReq;
-import net.nostromo.libc.struct.IfReqRn;
-import net.nostromo.libc.struct.IfReqRu;
+import net.nostromo.libc.struct.network.ifreq.IfReq;
+import net.nostromo.libc.struct.network.ifreq.IfReqRnUnion;
+import net.nostromo.libc.struct.network.ifreq.IfReqRuUnion;
 
 public class LibcNetwork implements LibcConstants {
 
@@ -34,7 +34,7 @@ public class LibcNetwork implements LibcConstants {
     public native int ioctl(int fd, long request, long ptr_ifreq);
 
     public void enablePromiscMode(final int fd, final String ifName) {
-        final IfReq ifReq = new IfReq(IfReqRn.Name.NAME, IfReqRu.Name.FLAGS);
+        final IfReq ifReq = new IfReq(IfReqRnUnion.Name.NAME, IfReqRuUnion.Name.FLAGS);
         Struct.copyString(ifReq.ifrn.name, ifName);
 
         ioctl(fd, SIOCGIFFLAGS, ifReq.pointer());
@@ -48,7 +48,7 @@ public class LibcNetwork implements LibcConstants {
     }
 
     public void disablePromiscMode(final int fd, final String ifName) {
-        final IfReq ifReq = new IfReq(IfReqRn.Name.NAME, IfReqRu.Name.FLAGS);
+        final IfReq ifReq = new IfReq(IfReqRnUnion.Name.NAME, IfReqRuUnion.Name.FLAGS);
         Struct.copyString(ifReq.ifrn.name, ifName);
 
         ioctl(fd, SIOCGIFFLAGS, ifReq.pointer());

@@ -15,17 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.tpacket.block;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
 
+// tpacket_hdr_v1 (linux/if_packet.h)
 public class TPacketHdrV1 extends Struct {
 
     // total bytes
     public static final int SIZE = 40;
 
-    // tpacket_hdr_v1 (linux/if_packet.h)
     public int block_status;         // u32
     public int num_pkts;             // u32
     public int offset_to_first_pkt;  // u32
@@ -34,8 +34,18 @@ public class TPacketHdrV1 extends Struct {
     public TPacketBdTs ts_first_pkt;
     public TPacketBdTs ts_last_pkt;
 
+    public TPacketHdrV1(final boolean instantiateObjects) {
+        super(instantiateObjects);
+    }
+
     @Override
-    protected void read(final NativeHeapBuffer buffer) {
+    public void instantiateObjects() {
+        ts_first_pkt = new TPacketBdTs();
+        ts_last_pkt = new TPacketBdTs();
+    }
+
+    @Override
+    public void read(final NativeHeapBuffer buffer) {
         block_status = buffer.getInt();
         num_pkts = buffer.getInt();
         offset_to_first_pkt = buffer.getInt();
@@ -46,7 +56,7 @@ public class TPacketHdrV1 extends Struct {
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
+    public void write(final NativeHeapBuffer buffer) {
         buffer.setInt(block_status);
         buffer.setInt(num_pkts);
         buffer.setInt(offset_to_first_pkt);

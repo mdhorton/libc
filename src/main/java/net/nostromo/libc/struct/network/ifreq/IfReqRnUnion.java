@@ -15,39 +15,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.ifreq;
 
-import net.nostromo.libc.Struct;
 import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Union;
 
-public class TPacketBlockDesc extends Struct {
+// ifreq (linux/if.h)
+public class IfReqRnUnion extends Union {
 
     // total bytes
-    public static final int SIZE = 48;
+    public static final int SIZE = IfReq.IF_NAMESIZE;
 
-    // tpacket_block_desc (linux/if_packet.h)
-    public int version;          // u32
-    public int offset_to_priv;   // u32
-    public TPacketBdHeaderU hdr;
+    public enum Name implements FieldName {NAME}
 
-    @Override
-    protected void read(final NativeHeapBuffer buffer) {
-        version = buffer.getInt();
-        offset_to_priv = buffer.getInt();
-        hdr.read(buffer);
+    public byte[] name; // 8[IF_NAMESIZE]
+
+    public IfReqRnUnion(final Name name) {
+        setFieldName(name);
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
-        buffer.setInt(version);
-        buffer.setInt(offset_to_priv);
-        hdr.write(buffer);
+    public void setFieldName(final FieldName unionField, final boolean instantiateObjects) {
+        this.fieldName = unionField;
+
+        if (unionField == Name.NAME) name = new byte[IfReq.IF_NAMESIZE];
     }
 
     @Override
-    public String toString() {
-        return String.format("ver: %d  priv: %d",
-                Integer.toUnsignedLong(version),
-                Integer.toUnsignedLong(offset_to_priv));
+    public void read(final NativeHeapBuffer buffer) {
+        if (fieldName == Name.NAME) buffer.getBytes(name);
+    }
+
+    @Override
+    public void write(final NativeHeapBuffer buffer) {
+        if (fieldName == Name.NAME) buffer.setBytes(name);
     }
 }

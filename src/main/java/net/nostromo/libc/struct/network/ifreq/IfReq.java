@@ -15,38 +15,41 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.ifreq;
 
-import net.nostromo.libc.Union;
 import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Struct;
 
-public class IfReqRn extends Union {
+// ifreq (linux/if.h)
+public class IfReq extends Struct {
 
     // total bytes
-    public static final int SIZE = IfReq.IF_NAMESIZE;
+    public static final int SIZE = IfReqRnUnion.SIZE + IfReqRuUnion.SIZE;
 
-    public enum Name implements FieldName {NAME}
+    public static final int IF_NAMESIZE = 16;
 
-    public byte[] name; // 8[IF_NAMESIZE]
+    public IfReqRnUnion ifrn;
+    public IfReqRuUnion ifru;
 
-    public IfReqRn(final NativeHeapBuffer buffer) {
-        super(buffer);
+    public IfReq() {
+        super(SIZE);
+    }
+
+    public IfReq(final IfReqRnUnion.Name rnName, final IfReqRuUnion.Name ruName) {
+        this();
+        ifrn = new IfReqRnUnion(rnName);
+        ifru = new IfReqRuUnion(ruName);
     }
 
     @Override
-    public void setFieldName(final FieldName unionField) {
-        this.fieldName = unionField;
-
-        if (unionField == Name.NAME) name = new byte[IfReq.IF_NAMESIZE];
+    public void read(final NativeHeapBuffer buffer) {
+        ifrn.read(buffer);
+        ifru.read(buffer);
     }
 
     @Override
-    protected void read(final NativeHeapBuffer buffer) {
-        if (fieldName == Name.NAME) buffer.getBytes(name);
-    }
-
-    @Override
-    protected void write(final NativeHeapBuffer buffer) {
-        if (fieldName == Name.NAME) buffer.setBytes(name);
+    public void write(final NativeHeapBuffer buffer) {
+        ifrn.write(buffer);
+        ifru.write(buffer);
     }
 }

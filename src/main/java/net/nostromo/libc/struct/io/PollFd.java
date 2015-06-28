@@ -15,29 +15,36 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.io;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
 
-public class SockAddr extends Struct {
+// pollfd (sys/poll.h)
+public class PollFd extends Struct {
 
     // total bytes
-    public static final int SIZE = 16;
+    public static final int SIZE = 8;
 
-    // ifmap (bits/socket.h)
-    public short sa_family;               // u16
-    public byte[] sa_data = new byte[14]; // 8[14]
+    public int fd;        // 32
+    public short events;  // 16
+    public short revents; // 16
 
-    @Override
-    protected void read(final NativeHeapBuffer buffer) {
-        sa_family = buffer.getShort();
-        buffer.getBytes(sa_data);
+    public PollFd() {
+        super(SIZE);
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
-        buffer.setShort(sa_family);
-        buffer.setBytes(sa_data);
+    public void read(final NativeHeapBuffer buffer) {
+        fd = buffer.getInt();
+        events = buffer.getShort();
+        revents = buffer.getShort();
+    }
+
+    @Override
+    public void write(final NativeHeapBuffer buffer) {
+        buffer.setInt(fd);
+        buffer.setShort(events);
+        buffer.setShort(revents);
     }
 }

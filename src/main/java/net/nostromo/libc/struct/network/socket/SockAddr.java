@@ -15,29 +15,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.socket;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
 
-public class TPacketBdTs extends Struct {
+// sockaddr (bits/socket.h)
+public class SockAddr extends Struct {
 
     // total bytes
-    public static final int SIZE = 8;
+    public static final int SIZE = 16;
 
-    // tpacket_bd_ts (linux/if_packet.h)
-    public int ts_sec;   // u32
-    public int ts_unsec; // u32 (union ts_usec/ts_nsec)
+    public short sa_family;               // u16
+    public byte[] sa_data = new byte[14]; // 8[14]
 
     @Override
-    protected void read(final NativeHeapBuffer buffer) {
-        ts_sec = buffer.getInt();
-        ts_unsec = buffer.getInt();
+    public void read(final NativeHeapBuffer buffer) {
+        sa_family = buffer.getShort();
+        buffer.getBytes(sa_data);
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
-        buffer.setInt(ts_sec);
-        buffer.setInt(ts_unsec);
+    public void write(final NativeHeapBuffer buffer) {
+        buffer.setShort(sa_family);
+        buffer.setBytes(sa_data);
     }
 }

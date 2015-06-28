@@ -15,17 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.ifreq;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
 
+// ifmap (net/if.h)
 public class IfMap extends Struct {
 
     // total bytes
     public static final int SIZE = 24;
 
-    // ifmap (net/if.h)
     public long mem_start;               // u64
     public long mem_end;                 // u64
     public short base_addr;              // u16
@@ -34,8 +34,7 @@ public class IfMap extends Struct {
     public byte port;                    // u8
     // 3 spare bytes
 
-    @Override
-    protected void read(final NativeHeapBuffer buffer) {
+    public void read(final NativeHeapBuffer buffer) {
         mem_start = buffer.getLong();
         mem_end = buffer.getLong();
         base_addr = buffer.getShort();
@@ -45,7 +44,7 @@ public class IfMap extends Struct {
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
+    public void write(final NativeHeapBuffer buffer) {
         buffer.setLong(mem_start);
         buffer.setLong(mem_end);
         buffer.setShort(base_addr);

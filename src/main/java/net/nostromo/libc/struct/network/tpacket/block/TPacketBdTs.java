@@ -15,38 +15,29 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.tpacket.block;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
-import net.nostromo.libc.Util;
 
-public class EthHdr extends Struct {
+// tpacket_bd_ts (linux/if_packet.h)
+public class TPacketBdTs extends Struct {
 
     // total bytes
-    public static final int SIZE = 14;
+    public static final int SIZE = 8;
 
-    // ethhdr (linux/if_ether.h)
-    public byte[] dst_mac = new byte[6]; // u8[6]
-    public byte[] src_mac = new byte[6]; // u8[6]
-    public short eth_type;               // ube16
+    public int ts_sec;   // u32
+    public int ts_unsec; // u32 (union ts_usec/ts_nsec)
 
     @Override
-    protected void read(final NativeHeapBuffer buffer) {
-        buffer.getBytes(dst_mac);
-        buffer.getBytes(src_mac);
-        eth_type = buffer.getNetworkShort();
+    public void read(final NativeHeapBuffer buffer) {
+        ts_sec = buffer.getInt();
+        ts_unsec = buffer.getInt();
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
-        buffer.setBytes(dst_mac);
-        buffer.setBytes(src_mac);
-        buffer.setNetworkShort(eth_type);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
+    public void write(final NativeHeapBuffer buffer) {
+        buffer.setInt(ts_sec);
+        buffer.setInt(ts_unsec);
     }
 }

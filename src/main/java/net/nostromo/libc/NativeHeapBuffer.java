@@ -244,6 +244,17 @@ public class NativeHeapBuffer {
         return unsafe.getLong(buffer, (long) offset + Unsafe.ARRAY_BYTE_BASE_OFFSET);
     }
 
+    public long getLong2(final int offset) {
+        return ((long) (buffer[offset] & 0xff) << 56) |
+                ((long) (buffer[offset + 1] & 0xff) << 48) |
+                ((long) (buffer[offset + 2] & 0xff) << 40) |
+                ((long) (buffer[offset + 3] & 0xff) << 32) |
+                ((long) (buffer[offset + 4] & 0xff) << 24) |
+                ((long) (buffer[offset + 5] & 0xff) << 16) |
+                ((long) (buffer[offset + 6] & 0xff) << 8) |
+                ((long) (buffer[offset + 7] & 0xff));
+    }
+
     public void setLong(final int offset, final long l) {
         unsafe.putLong(buffer, (long) offset + Unsafe.ARRAY_BYTE_BASE_OFFSET, l);
     }
@@ -264,5 +275,18 @@ public class NativeHeapBuffer {
 
     public void setNativeLong(final int offset, final long l) {
         unsafe.putLong(pointer + offset, l);
+    }
+
+    // LONG[]
+    public void getLongs(final long[] longs) {
+        for (int idx = 0; idx < longs.length; idx++) {
+            longs[idx] = getLong();
+        }
+    }
+
+    public void setLongs(final long[] longs) {
+        for (int idx = 0; idx < longs.length; idx++) {
+            setLong(longs[idx]);
+        }
     }
 }

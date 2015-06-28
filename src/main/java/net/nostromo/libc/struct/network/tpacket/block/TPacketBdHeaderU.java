@@ -15,35 +15,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.tpacket.block;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Union;
 
+// tpacket_bd_header_u (linux/if_packet.h)
 public class TPacketBdHeaderU extends Union {
 
     // total bytes
     public static final int SIZE = 40;
 
-    // tpacket_bd_header_u (linux/if_packet.h)
+    public enum Name implements FieldName {BH1}
+
     public TPacketHdrV1 bh1;
 
-    public TPacketBdHeaderU(final NativeHeapBuffer buffer) {
-        super(buffer);
+    public TPacketBdHeaderU(final Name name) {
+        setFieldName(name);
     }
 
     @Override
-    public void setFieldName(final FieldName fieldName) {
+    public void setFieldName(final FieldName fieldName, final boolean instantiateObjects) {
+        this.fieldName = fieldName;
 
+        if (fieldName == Name.BH1) bh1 = new TPacketHdrV1(instantiateObjects);
     }
 
     @Override
-    protected void read(final NativeHeapBuffer buffer) {
-        bh1.read(buffer);
+    public void read(final NativeHeapBuffer buffer) {
+        if (fieldName == Name.BH1) bh1.read(buffer);
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
-        bh1.write(buffer);
+    public void write(final NativeHeapBuffer buffer) {
+        if (fieldName == Name.BH1) bh1.write(buffer);
     }
 }

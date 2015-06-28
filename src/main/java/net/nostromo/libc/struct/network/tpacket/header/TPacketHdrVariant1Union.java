@@ -15,35 +15,38 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.tpacket.header;
 
-import net.nostromo.libc.Struct;
 import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Union;
 
-public class TPacketHdrVariant1 extends Struct {
+public class TPacketHdrVariant1Union extends Union {
 
     // total bytes
-    public static final int SIZE = 12;
+    public static final int SIZE = TPacketHdrVariant1.SIZE;
 
-    // tpacket_hdr_variant1 (linux/if_packet.h)
-    public int tp_rxhash;      // u32
-    public int tp_vlan_tci;    // u32
-    public short tp_vlan_tpid; // u16
-    public short tp_padding;   // u16
+    public enum Name implements FieldName {HV1}
 
-    @Override
-    protected void read(final NativeHeapBuffer buffer) {
-        tp_rxhash = buffer.getInt();
-        tp_vlan_tci = buffer.getInt();
-        tp_vlan_tpid = buffer.getShort();
-        tp_padding = buffer.getShort();
+    public TPacketHdrVariant1 hv1;
+
+    public TPacketHdrVariant1Union(final Name name) {
+        setFieldName(name);
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
-        buffer.setInt(tp_rxhash);
-        buffer.setInt(tp_vlan_tci);
-        buffer.setShort(tp_vlan_tpid);
-        buffer.setShort(tp_padding);
+    public void setFieldName(final FieldName fieldName, final boolean instantiateObjects) {
+        this.fieldName = fieldName;
+
+        if (fieldName == Name.HV1) hv1 = new TPacketHdrVariant1();
+    }
+
+    @Override
+    public void read(final NativeHeapBuffer buffer) {
+        if (fieldName == Name.HV1) hv1.read(buffer);
+    }
+
+    @Override
+    public void write(final NativeHeapBuffer buffer) {
+        if (fieldName == Name.HV1) hv1.write(buffer);
     }
 }

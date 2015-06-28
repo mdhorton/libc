@@ -15,29 +15,40 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct.c;
+package net.nostromo.libc.struct.system;
 
-import com.sun.jna.NativeLong;
-import com.sun.jna.Structure;
+import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Struct;
 
-import java.util.Collections;
-import java.util.List;
-
-public class cpu_set_t extends Structure {
+// cpu_set_t (bits/sched.h)
+public class CpuSetT extends Struct {
 
     public static final int CPU_SETSIZE = 1024;
-    public static final int NCPUBITS = 8 * NativeLong.SIZE;
+    public static final int NCPUBITS = Long.SIZE;
+    public static final int ARRAY_SIZE = CPU_SETSIZE / NCPUBITS;
 
-    public NativeLong[] __bits = new NativeLong[CPU_SETSIZE / NCPUBITS];
+    // total bytes
+    public static final int SIZE = ARRAY_SIZE * Long.BYTES;
 
-    public cpu_set_t() {
-        for (int i = 0; i < __bits.length; i++) {
-            __bits[i] = new NativeLong(0L);
-        }
+    public long[] bits;
+
+    public CpuSetT() {
+        super(SIZE);
     }
 
-    protected List<?> getFieldOrder() {
-        return Collections.singletonList("__bits");
+    @Override
+    public void instantiateObjects() {
+        bits = new long[ARRAY_SIZE];
+    }
+
+    @Override
+    public void read(final NativeHeapBuffer buffer) {
+        buffer.getLongs(bits);
+    }
+
+    @Override
+    public void write(final NativeHeapBuffer buffer) {
+        buffer.setLongs(bits);
     }
 
     private int CPUELT(final int cpu) {
@@ -49,6 +60,6 @@ public class cpu_set_t extends Structure {
     }
 
     public void CPU_SET(final int cpu) {
-        __bits[CPUELT(cpu)].setValue(__bits[CPUELT(cpu)].longValue() | CPUMASK(cpu));
+        bits[CPUELT(cpu)] = bits[CPUELT(cpu)] | CPUMASK(cpu);
     }
 }

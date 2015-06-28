@@ -15,17 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct;
+package net.nostromo.libc.struct.network.tpacket.header;
 
-import net.nostromo.libc.Struct;
 import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Struct;
 
+// tpacket3_hdr (linux/if_packet.h)
 public class TPacket3Hdr extends Struct {
 
     // total bytes
     public static final int SIZE = 48;
 
-    // tpacket3_hdr (linux/if_packet.h)
     public int tp_next_offset;              // u32
     public int tp_sec;                      // u32
     public int tp_nsec;                     // u32
@@ -34,11 +34,16 @@ public class TPacket3Hdr extends Struct {
     public int tp_status;                   // u32
     public short tp_mac;                    // u16
     public short tp_net;                    // u16
-    public TPacketHdrVariant1 hv1;
+    public TPacketHdrVariant1Union hv1;
     public byte[] tp_padding = new byte[8]; // u8[8]
 
+    public TPacket3Hdr(final NativeHeapBuffer buffer, final TPacketHdrVariant1Union.Name name) {
+        super(buffer);
+        hv1 = new TPacketHdrVariant1Union(name);
+    }
+
     @Override
-    protected void read(final NativeHeapBuffer buffer) {
+    public void read(final NativeHeapBuffer buffer) {
         tp_next_offset = buffer.getInt();
         tp_sec = buffer.getInt();
         tp_nsec = buffer.getInt();
@@ -52,7 +57,7 @@ public class TPacket3Hdr extends Struct {
     }
 
     @Override
-    protected void write(final NativeHeapBuffer buffer) {
+    public void write(final NativeHeapBuffer buffer) {
         buffer.setInt(tp_next_offset);
         buffer.setInt(tp_sec);
         buffer.setInt(tp_nsec);

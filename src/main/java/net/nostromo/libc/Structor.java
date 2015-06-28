@@ -17,9 +17,6 @@
 
 package net.nostromo.libc;
 
-import net.nostromo.libc.struct.c.sockaddr_ll;
-import net.nostromo.libc.struct.c.tpacket_req3;
-
 public class Structor implements LibcConstants {
 
     public static sockaddr_ll sockaddr_ll(final String ifname, final short linkFamily, final int protocol) {

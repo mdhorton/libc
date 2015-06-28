@@ -20,20 +20,35 @@ package net.nostromo.libc;
 public abstract class Struct {
 
     protected NativeHeapBuffer buffer;
+    protected boolean instantiateObjects;
 
-    public Struct() {}
+    public Struct() {
+        this(null, true);
+    }
 
     public Struct(final int size) {
-        buffer = new NativeHeapBuffer(size);
+        this(new NativeHeapBuffer(size), true);
     }
 
     public Struct(NativeHeapBuffer buffer) {
-        this.buffer = buffer;
+        this(buffer, true);
     }
 
-    protected abstract void read(NativeHeapBuffer buffer);
+    public Struct(boolean instantiateObjects) {
+        this(null, instantiateObjects);
+    }
 
-    protected abstract void write(NativeHeapBuffer buffer);
+    public Struct(NativeHeapBuffer buffer, boolean instantiateObjects) {
+        this.buffer = buffer;
+        this.instantiateObjects = instantiateObjects;
+        if (instantiateObjects) instantiateObjects();
+    }
+
+    public abstract void read(NativeHeapBuffer buffer);
+
+    public abstract void write(NativeHeapBuffer buffer);
+
+    public void instantiateObjects() {}
 
     public void read() {
         buffer.read(0);
