@@ -28,48 +28,9 @@ public class Socket implements LibcConstants {
     }
 
     public void bind(final Structure struct) {
-        final sockaddr sa = new sockaddr(struct.getPointer());
-        sa.read();
-        libc.bind(fd, sa, struct.size());
-    }
-
-    public void enablePromiscuousMode(final String ifname) {
-        final ifreq ifreq = new ifreq();
-        final byte[] src = ifname.getBytes();
-        System.arraycopy(src, 0, ifreq.ifrn_name, 0, src.length);
-
-        libc.ioctl(fd, SIOCGIFFLAGS, ifreq);
-        ifreq.read();
-
-        System.out.println(ifreq.ifru_mtu);
-
-        // is it already enabled?
-        if ((ifreq.ifru_flags & IFF_PROMISC) != 0) {
-            return;
-        }
-
-        System.out.println(ifreq.ifru_flags & IFF_PROMISC);
-
-        ifreq.ifru_flags |= IFF_PROMISC;
-        libc.ioctl(fd, SIOCSIFFLAGS, ifreq);
-    }
-
-    public void disablePromiscuousMode(final String ifname) {
-        final ifreq ifreq = new ifreq();
-        final byte[] src = ifname.getBytes();
-        System.arraycopy(src, 0, ifreq.ifrn_name, 0, src.length);
-
-        libc.ioctl(fd, SIOCGIFFLAGS, ifreq);
-
-        System.out.println(ifreq.ifru_flags & IFF_PROMISC);
-
-        // is it already disabled?
-        if ((ifreq.ifru_flags & IFF_PROMISC) == 0) {
-            return;
-        }
-
-        ifreq.ifru_flags &= ~IFF_PROMISC;
-        libc.ioctl(fd, SIOCSIFFLAGS, ifreq);
+//        final sockaddr sa = new sockaddr(struct.getPointer());
+//        sa.read();
+//        libc.bind(fd, sa, struct.size());
     }
 
     public int getFd() {

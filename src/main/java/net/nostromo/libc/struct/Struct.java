@@ -15,7 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc;
+package net.nostromo.libc.struct;
+
+import net.nostromo.libc.NativeHeapBuffer;
 
 public abstract class Struct {
 

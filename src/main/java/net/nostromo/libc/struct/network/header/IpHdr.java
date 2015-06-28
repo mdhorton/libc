@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.header;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
+import net.nostromo.libc.struct.Struct;
 import net.nostromo.libc.Util;
 
 // iphdr (netinet/ip.h)

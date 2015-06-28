@@ -17,12 +17,14 @@
 
 package net.nostromo.libc;
 
+import net.nostromo.libc.struct.io.PollFd;
 import net.nostromo.libc.struct.network.header.EthHdr;
 import net.nostromo.libc.struct.network.header.IpHdr;
 import net.nostromo.libc.struct.network.header.TcpHdr;
-import net.nostromo.libc.struct.c.pollfd;
+import net.nostromo.libc.struct.network.tpacket.block.TPacketBdHeaderU;
 import net.nostromo.libc.struct.network.tpacket.block.TPacketBlockDesc;
 import net.nostromo.libc.struct.network.tpacket.header.TPacket3Hdr;
+import net.nostromo.libc.struct.network.tpacket.header.TPacketHdrVariant1Union;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.Unsafe;
@@ -32,10 +34,11 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final Unsafe unsafe = TheUnsafe.unsafe;
 
-    protected final TPacket3Hdr tp3Hdr = new TPacket3Hdr();
-    protected final EthHdr ethHdr = new EthHdr();
-    protected final IpHdr ipHdr = new IpHdr();
-    protected final TcpHdr tcpHdr = new TcpHdr();
+    protected final TPacketBlockDesc blockHdr;
+    protected final TPacket3Hdr tp3Hdr;
+    protected final EthHdr ethHdr;
+    protected final IpHdr ipHdr;
+    protected final TcpHdr tcpHdr;
 
     protected final long mmapAddress;
     protected final int sockFd;
@@ -49,12 +52,16 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
         this.blockSize = blockSize;
         this.blockCnt = blockCnt;
         buffer = new NativeHeapBuffer(blockSize, mmapAddress);
+
+        blockHdr = new TPacketBlockDesc(buffer, TPacketBdHeaderU.Name.BH1);
+        tp3Hdr = new TPacket3Hdr(buffer, TPacketHdrVariant1Union.Name.HV1);
+        ethHdr = new EthHdr(buffer);
+        ipHdr = new IpHdr(buffer);
+        tcpHdr = new TcpHdr(buffer);
     }
 
     public void loop() {
-        final TPacketBlockDesc blockHdr = new TPacketBlockDesc();
-
-        final pollfd pollfd = new pollfd();
+        final PollFd pollfd = new PollFd();
         pollfd.fd = sockFd;
         pollfd.events = (short) (POLLIN | POLLERR);
         pollfd.revents = 0;
@@ -72,7 +79,7 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
 
             // poll the block until the kernel gives it back to user space
             while ((blockHdr.hdr.bh1.block_status & TP_STATUS_USER) == 0) {
-                libc.poll(pollfd, 1, -1);
+//                libc.poll(pollfd, 1, -1);
                 buffer.read(blockStart, TPacketBlockDesc.SIZE);
                 blockHdr.read(buffer, 0);
             }

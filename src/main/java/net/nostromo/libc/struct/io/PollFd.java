@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.io;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
+import net.nostromo.libc.struct.Struct;
 
 // pollfd (sys/poll.h)
 public class PollFd extends Struct {

@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.tpacket.block;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
+import net.nostromo.libc.struct.Struct;
 
 // tpacket_block_desc (linux/if_packet.h)
 public class TPacketBlockDesc extends Struct {

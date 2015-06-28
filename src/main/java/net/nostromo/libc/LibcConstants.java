@@ -21,7 +21,7 @@ import com.sun.jna.Native;
 
 public interface LibcConstants {
 
-    Libc libc = (Libc) Native.loadLibrary("c", Libc.class);
+    LibcOld libc = (LibcOld) Native.loadLibrary("c", LibcOld.class);
 
     byte ZERO_BYTE = (byte) 0;
     byte ZERO_SHORT = (short) 0;

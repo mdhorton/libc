@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.tpacket.block;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Union;
+import net.nostromo.libc.struct.Union;
 
 // tpacket_bd_header_u (linux/if_packet.h)
 public class TPacketBdHeaderU extends Union {

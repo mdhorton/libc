@@ -15,7 +15,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc;
+package net.nostromo.libc.struct;
+
+import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.struct.Struct;
 
 public abstract class Union extends Struct {
 

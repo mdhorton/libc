@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.tpacket.header;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Union;
+import net.nostromo.libc.struct.Union;
 
 public class TPacketHdrVariant1Union extends Union {
 

@@ -15,29 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct.network.tpacket.block;
+package net.nostromo.libc.system;
 
-import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.struct.Struct;
+import net.nostromo.libc.Libc;
 
-// tpacket_bd_ts (linux/if_packet.h)
-public class TPacketBdTs extends Struct {
+public class LibcSystem extends Libc {
 
-    // total bytes
-    public static final int SIZE = 8;
+    public native int sched_setaffinity(int pid, int cpusetsize, long ptr_cpuset);
 
-    public int ts_sec;   // u32
-    public int ts_unsec; // u32 (union ts_usec/ts_nsec)
+    public native int getpagesize();
 
-    @Override
-    public void read(final NativeHeapBuffer buffer) {
-        ts_sec = buffer.getInt();
-        ts_unsec = buffer.getInt();
-    }
+    public native int getpid();
 
-    @Override
-    public void write(final NativeHeapBuffer buffer) {
-        buffer.setInt(ts_sec);
-        buffer.setInt(ts_unsec);
-    }
+    public native long syscall(long sysno);
 }

@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.tpacket;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
+import net.nostromo.libc.struct.Struct;
 
 // tpacket_req3 (linux/packet.h)
 public class TPacketReq3 extends Struct {

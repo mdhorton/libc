@@ -19,6 +19,7 @@ package net.nostromo.libc;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import net.nostromo.libc.struct.network.tpacket.TPacketReq3;
 
 public class PacketMmapSocket extends Socket {
 
@@ -31,8 +32,8 @@ public class PacketMmapSocket extends Socket {
         libc.setsockopt(fd, SOL_PACKET, PACKET_VERSION, ref.getPointer(), Util.SIZE_OF_INT);
     }
 
-    public void setupPacketRxRing(final tpacket_req3 req3) {
-        libc.setsockopt(fd, SOL_PACKET, PACKET_RX_RING, req3.getPointer(), req3.size());
+    public void setupPacketRxRing(final TPacketReq3 req3) {
+//        libc.setsockopt(fd, SOL_PACKET, PACKET_RX_RING, req3.getPointer(), req3.size());
     }
 
     public void setupPacketFanout(final int fanoutType) {

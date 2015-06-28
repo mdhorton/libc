@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.header;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
+import net.nostromo.libc.struct.Struct;
 
 // tcphdr (netinet/tcp.h)
 // https://en.wikipedia.org/wiki/Transmission_Control_Protocol

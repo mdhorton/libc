@@ -15,23 +15,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc;
+package net.nostromo.libc.io;
 
+import net.nostromo.libc.Libc;
+import net.nostromo.libc.struct.Struct;
 import net.nostromo.libc.struct.network.ifreq.IfReq;
 import net.nostromo.libc.struct.network.ifreq.IfReqRnUnion;
 import net.nostromo.libc.struct.network.ifreq.IfReqRuUnion;
 
-public class LibcNetwork implements LibcConstants {
-
-    static {
-        System.loadLibrary("c_jni");
-    }
-
-    public native int socket(int domain, int type, int protocol);
-
-    public native int setsockopt(int sockfd, int level, int optname, long ptr_optval, int optlen);
+public class LibcIo extends Libc {
 
     public native int ioctl(int fd, long request, long ptr_ifreq);
+
+    public native long write(int fd, long ptr_buf, long count);
+
+    public native long read(int fd, long ptr_buf, long count);
+
+    public native long mmap(long ptr_addr, long length, int prot, int flags, int fd, long offset);
+
+    public native int poll(long ptr_fds, long nfds, int timeout);
 
     public void enablePromiscMode(final int fd, final String ifName) {
         final IfReq ifReq = new IfReq(IfReqRnUnion.Name.NAME, IfReqRuUnion.Name.FLAGS);
@@ -59,14 +61,5 @@ public class LibcNetwork implements LibcConstants {
 
         ifReq.ifru.flags &= ~IFF_PROMISC;
         ioctl(fd, SIOCSIFFLAGS, ifReq.pointer());
-    }
-
-    public static void main(String[] args) throws Exception {
-        final String ifName = "enp2s0f1";
-        final LibcNetwork libc = new LibcNetwork();
-        final int fd = libc.socket(PF_PACKET, SOCK_RAW, ETH_P_ALL);
-
-        libc.enablePromiscMode(fd, ifName);
-        libc.disablePromiscMode(fd, ifName);
     }
 }

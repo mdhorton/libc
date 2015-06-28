@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.ifreq;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
+import net.nostromo.libc.struct.Struct;
 
 // ifreq (linux/if.h)
 public class IfReq extends Struct {

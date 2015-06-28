@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.tpacket.header;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
+import net.nostromo.libc.struct.Struct;
 
 // tpacket3_hdr (linux/if_packet.h)
 public class TPacket3Hdr extends Struct {

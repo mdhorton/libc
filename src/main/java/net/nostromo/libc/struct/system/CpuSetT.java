@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.system;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
+import net.nostromo.libc.struct.Struct;
 
 // cpu_set_t (bits/sched.h)
 public class CpuSetT extends Struct {

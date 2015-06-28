@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.ifreq;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Union;
+import net.nostromo.libc.struct.Union;
 import net.nostromo.libc.struct.network.socket.SockAddr;
 
 // ifreq (linux/if.h)

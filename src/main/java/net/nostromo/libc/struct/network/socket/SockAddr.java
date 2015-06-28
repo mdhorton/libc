@@ -18,7 +18,7 @@
 package net.nostromo.libc.struct.network.socket;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
+import net.nostromo.libc.struct.Struct;
 
 // sockaddr (bits/socket.h)
 public class SockAddr extends Struct {
