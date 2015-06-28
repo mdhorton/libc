@@ -28,7 +28,7 @@ public class IfReqRuUnion extends Union {
     public static final int SIZE = 24;
 
     public enum Name implements FieldName {
-        ADDR, DSTADDR, BROADADDR, NETMASK, HWADDR, FLAGS, IVALUE, MTU, MAP, SLAVE, NEWNAME, DATA
+        ADDR, DSTADDR, BROADADDR, NETMASK, HWADDR, FLAGS, IFINDEX, MTU, MAP, SLAVE, NEWNAME, DATA
     }
 
     public SockAddr addr;
@@ -37,7 +37,7 @@ public class IfReqRuUnion extends Union {
     public SockAddr netmask;
     public SockAddr hwaddr;
     public short flags;         // 16
-    public int ivalue;          // 32
+    public int ifindex;         // 32
     public int mtu;             // 32
     public IfMap map;
     public byte[] slave;        // 8[IF_NAMESIZE]
@@ -70,7 +70,7 @@ public class IfReqRuUnion extends Union {
         else if (fieldName == Name.NETMASK) netmask.read(buffer);
         else if (fieldName == Name.HWADDR) hwaddr.read(buffer);
         else if (fieldName == Name.FLAGS) flags = buffer.getShort();
-        else if (fieldName == Name.IVALUE) ivalue = buffer.getInt();
+        else if (fieldName == Name.IFINDEX) ifindex = buffer.getInt();
         else if (fieldName == Name.MTU) mtu = buffer.getInt();
         else if (fieldName == Name.MAP) map.read(buffer);
         else if (fieldName == Name.SLAVE) buffer.getBytes(slave);
@@ -86,7 +86,7 @@ public class IfReqRuUnion extends Union {
         else if (fieldName == Name.NETMASK) netmask.write(buffer);
         else if (fieldName == Name.HWADDR) hwaddr.write(buffer);
         else if (fieldName == Name.FLAGS) buffer.setShort(flags);
-        else if (fieldName == Name.IVALUE) buffer.setInt(ivalue);
+        else if (fieldName == Name.IFINDEX) buffer.setInt(ifindex);
         else if (fieldName == Name.MTU) buffer.setInt(mtu);
         else if (fieldName == Name.MAP) map.write(buffer);
         else if (fieldName == Name.SLAVE) buffer.setBytes(slave);

@@ -21,7 +21,7 @@ import net.nostromo.libc.Libc;
 
 public class LibcSystem extends Libc {
 
-    public native int sched_setaffinity(int pid, int cpusetsize, long ptr_cpuset);
+    public native int sched_setaffinity(int pid, long ptr_cpuset);
 
     public native int getpagesize();
 

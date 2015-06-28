@@ -15,19 +15,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.file;
+package net.nostromo.libc.system;
 
-import net.nostromo.libc.Libc;
+public interface LibcSystemConstants {
 
-public class LibcFile extends Libc {
-
-    public native int open(String pathName, int flags);
-
-    public native int open(String pathName, int flags, int mode);
-
-    public native long lseek(int fd, long offset, int whence);
-
-    public native int truncate(String pathName, long length);
-
-    public native int ftruncate(int fd, long length);
+    int __NR_gettid = 186;
 }

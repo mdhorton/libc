@@ -23,9 +23,9 @@ import net.nostromo.libc.struct.network.ifreq.IfReq;
 import net.nostromo.libc.struct.network.ifreq.IfReqRnUnion;
 import net.nostromo.libc.struct.network.ifreq.IfReqRuUnion;
 
-public class LibcIo extends Libc {
+public class LibcIo extends Libc implements LibcIoConstants {
 
-    public native int ioctl(int fd, long request, long ptr_ifreq);
+    public native int ioctl(int fd, long request, long ptr_argp);
 
     public native long write(int fd, long ptr_buf, long count);
 
@@ -61,5 +61,25 @@ public class LibcIo extends Libc {
 
         ifReq.ifru.flags &= ~IFF_PROMISC;
         ioctl(fd, SIOCSIFFLAGS, ifReq.pointer());
+    }
+
+    public int getMtu(final int fd, final String ifName) {
+        final IfReq ifReq = new IfReq(IfReqRnUnion.Name.NAME, IfReqRuUnion.Name.MTU);
+        Struct.copyString(ifReq.ifrn.name, ifName);
+
+        ioctl(fd, SIOCGIFMTU, ifReq.pointer());
+        ifReq.read();
+
+        return ifReq.ifru.mtu;
+    }
+
+    public int getInterfaceId(final int fd, final String ifName) {
+        final IfReq ifReq = new IfReq(IfReqRnUnion.Name.NAME, IfReqRuUnion.Name.IFINDEX);
+        Struct.copyString(ifReq.ifrn.name, ifName);
+
+        ioctl(fd, SIOCGIFINDEX, ifReq.pointer());
+        ifReq.read();
+
+        return ifReq.ifru.ifindex;
     }
 }

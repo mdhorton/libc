@@ -17,18 +17,25 @@
 
 package net.nostromo.libc;
 
-import com.sun.jna.Native;
-
 import java.nio.ByteOrder;
 
 public class Util {
 
     public static final boolean BIG_ENDIAN = ByteOrder.nativeOrder().equals(ByteOrder.BIG_ENDIAN);
-    public static final int SIZE_OF_INT = Native.getNativeSize(Integer.class);
 
     public static short htons(final short val) {
         if (BIG_ENDIAN) return val;
         return Short.reverseBytes(val);
+    }
+
+    public static int htonl(final int val) {
+        if (BIG_ENDIAN) return val;
+        return Integer.reverseBytes(val);
+    }
+
+    public static long htonll(final long val) {
+        if (BIG_ENDIAN) return val;
+        return Long.reverseBytes(val);
     }
 
     public static String inetNtoA(final int address) {

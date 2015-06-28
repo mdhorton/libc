@@ -15,25 +15,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc;
+package net.nostromo.libc.io;
 
-import com.sun.jna.Structure;
+public interface LibcIoConstants {
 
-public class Socket implements LibcConstants {
+    // poll
+    int POLLIN = 0x001;
+    int POLLERR = 0x008;
 
-    protected final int fd;
+    // mmap
+    int PROT_READ = 0x1;
+    int PROT_WRITE = 0x2;
 
-    public Socket(final int domain, final int type, final int protocol) {
-        fd = libc.socket(domain, type, Util.htons((short) protocol));
-    }
+    int MAP_SHARED = 0x01;
+    int MAP_LOCKED = 0x02000;
+    int MAP_NORESERVE = 0x04000;
 
-    public void bind(final Structure struct) {
-//        final sockaddr sa = new sockaddr(struct.getPointer());
-//        sa.read();
-//        libc.bind(fd, sa, struct.size());
-    }
+    // ioctl
+    int SIOCGIFFLAGS = 0x8913;
+    int SIOCSIFFLAGS = 0x8914;
+    int SIOCGIFMTU = 0x8921;
+    int SIOCGIFINDEX = 0x8933;
 
-    public int getFd() {
-        return fd;
-    }
+    int IFF_PROMISC = 0x100;
 }
