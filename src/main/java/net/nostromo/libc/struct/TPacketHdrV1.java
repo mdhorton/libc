@@ -19,34 +19,40 @@ package net.nostromo.libc.struct;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
-import net.nostromo.libc.Util;
 
-public class EthHdr extends Struct {
+public class TPacketHdrV1 extends Struct {
 
     // total bytes
-    public static final int SIZE = 14;
+    public static final int SIZE = 40;
 
-    // ethhdr (linux/if_ether.h)
-    public byte[] dst_mac = new byte[6]; // u8[6]
-    public byte[] src_mac = new byte[6]; // u8[6]
-    public short eth_type;               // ube16
+    // tpacket_hdr_v1 (linux/if_packet.h)
+    public int block_status;         // u32
+    public int num_pkts;             // u32
+    public int offset_to_first_pkt;  // u32
+    public int blk_len;              // u32
+    public long seq_num;             // u64 (aligned)
+    public TPacketBdTs ts_first_pkt;
+    public TPacketBdTs ts_last_pkt;
 
     @Override
     protected void read(final NativeHeapBuffer buffer) {
-        buffer.getBytes(dst_mac);
-        buffer.getBytes(src_mac);
-        eth_type = buffer.getNetworkShort();
+        block_status = buffer.getInt();
+        num_pkts = buffer.getInt();
+        offset_to_first_pkt = buffer.getInt();
+        blk_len = buffer.getInt();
+        seq_num = buffer.getLong();
+        ts_first_pkt.read(buffer);
+        ts_last_pkt.read(buffer);
     }
 
     @Override
     protected void write(final NativeHeapBuffer buffer) {
-        buffer.setBytes(dst_mac);
-        buffer.setBytes(src_mac);
-        buffer.setNetworkShort(eth_type);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
+        buffer.setInt(block_status);
+        buffer.setInt(num_pkts);
+        buffer.setInt(offset_to_first_pkt);
+        buffer.setInt(blk_len);
+        buffer.setLong(seq_num);
+        ts_first_pkt.write(buffer);
+        ts_last_pkt.write(buffer);
     }
 }

@@ -17,32 +17,28 @@
 
 package net.nostromo.libc.struct;
 
+import net.nostromo.libc.Struct;
 import net.nostromo.libc.NativeHeapBuffer;
 
-public class TPacket3Hdr extends JavaStruct {
+public class TPacket3Hdr extends Struct {
 
-    // total 48 bytes
+    // total bytes
+    public static final int SIZE = 48;
 
     // tpacket3_hdr (linux/if_packet.h)
-    public int tp_next_offset; // u32
-    public int tp_sec;         // u32
-    public int tp_nsec;        // u32
-    public int tp_snaplen;     // u32
-    public int tp_len;         // u32
-    public int tp_status;      // u32
-    public short tp_mac;       // u16
-    public short tp_net;       // u16
-
-    // tpacket_hdr_variant1
-    public int hv1_rxhash;         // u32
-    public int hv1_vlan_tci;       // u32
-    public short hv1_tp_vlan_tpid; // u16
-    public short hv1_padding;      // u16
-
+    public int tp_next_offset;              // u32
+    public int tp_sec;                      // u32
+    public int tp_nsec;                     // u32
+    public int tp_snaplen;                  // u32
+    public int tp_len;                      // u32
+    public int tp_status;                   // u32
+    public short tp_mac;                    // u16
+    public short tp_net;                    // u16
+    public TPacketHdrVariant1 hv1;
     public byte[] tp_padding = new byte[8]; // u8[8]
 
     @Override
-    void read(final NativeHeapBuffer buffer) {
+    protected void read(final NativeHeapBuffer buffer) {
         tp_next_offset = buffer.getInt();
         tp_sec = buffer.getInt();
         tp_nsec = buffer.getInt();
@@ -51,15 +47,12 @@ public class TPacket3Hdr extends JavaStruct {
         tp_status = buffer.getInt();
         tp_mac = buffer.getShort();
         tp_net = buffer.getShort();
-        hv1_rxhash = buffer.getInt();
-        hv1_vlan_tci = buffer.getInt();
-        hv1_tp_vlan_tpid = buffer.getShort();
-        hv1_padding = buffer.getShort();
+        hv1.read(buffer);
         buffer.getBytes(tp_padding);
     }
 
     @Override
-    void write(final NativeHeapBuffer buffer) {
+    protected void write(final NativeHeapBuffer buffer) {
         buffer.setInt(tp_next_offset);
         buffer.setInt(tp_sec);
         buffer.setInt(tp_nsec);
@@ -68,25 +61,19 @@ public class TPacket3Hdr extends JavaStruct {
         buffer.setInt(tp_status);
         buffer.setShort(tp_mac);
         buffer.setShort(tp_net);
-        buffer.setInt(hv1_rxhash);
-        buffer.setInt(hv1_vlan_tci);
-        buffer.setShort(hv1_tp_vlan_tpid);
-        buffer.setShort(hv1_padding);
+        hv1.write(buffer);
         buffer.setBytes(tp_padding);
     }
 
     @Override
     public String toString() {
         return String.format(
-                "%d.%d  next: %d  len: %d (%d)  status: %d  mac: %d  net: %d  rxhsh: %d  tci: %d  tpid: %d",
+                "%d.%d  next: %d  len: %d (%d)  status: %d  mac: %d  net: %d",
                 Integer.toUnsignedLong(tp_sec), Integer.toUnsignedLong(tp_nsec),
                 Integer.toUnsignedLong(tp_next_offset),
                 Integer.toUnsignedLong(tp_len), Integer.toUnsignedLong(tp_snaplen),
                 Integer.toUnsignedLong(tp_status),
                 Short.toUnsignedInt(tp_mac),
-                Short.toUnsignedInt(tp_net),
-                Integer.toUnsignedLong(hv1_rxhash),
-                Integer.toUnsignedLong(hv1_vlan_tci),
-                Short.toUnsignedInt(hv1_tp_vlan_tpid));
+                Short.toUnsignedInt(tp_net));
     }
 }

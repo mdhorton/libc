@@ -17,36 +17,37 @@
 
 package net.nostromo.libc.struct;
 
-import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
-import net.nostromo.libc.Util;
+import net.nostromo.libc.NativeHeapBuffer;
 
-public class EthHdr extends Struct {
+public class TPacketBlockDesc extends Struct {
 
     // total bytes
-    public static final int SIZE = 14;
+    public static final int SIZE = 48;
 
-    // ethhdr (linux/if_ether.h)
-    public byte[] dst_mac = new byte[6]; // u8[6]
-    public byte[] src_mac = new byte[6]; // u8[6]
-    public short eth_type;               // ube16
+    // tpacket_block_desc (linux/if_packet.h)
+    public int version;          // u32
+    public int offset_to_priv;   // u32
+    public TPacketBdHeaderU hdr;
 
     @Override
     protected void read(final NativeHeapBuffer buffer) {
-        buffer.getBytes(dst_mac);
-        buffer.getBytes(src_mac);
-        eth_type = buffer.getNetworkShort();
+        version = buffer.getInt();
+        offset_to_priv = buffer.getInt();
+        hdr.read(buffer);
     }
 
     @Override
     protected void write(final NativeHeapBuffer buffer) {
-        buffer.setBytes(dst_mac);
-        buffer.setBytes(src_mac);
-        buffer.setNetworkShort(eth_type);
+        buffer.setInt(version);
+        buffer.setInt(offset_to_priv);
+        hdr.write(buffer);
     }
 
     @Override
     public String toString() {
-        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
+        return String.format("ver: %d  priv: %d",
+                Integer.toUnsignedLong(version),
+                Integer.toUnsignedLong(offset_to_priv));
     }
 }

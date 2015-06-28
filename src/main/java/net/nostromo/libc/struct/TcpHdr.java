@@ -18,8 +18,9 @@
 package net.nostromo.libc.struct;
 
 import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Struct;
 
-public class TcpHdr extends JavaStruct {
+public class TcpHdr extends Struct {
 
     // total 20 bytes
     // can have up to 40 more bytes of optional headers
@@ -44,10 +45,12 @@ public class TcpHdr extends JavaStruct {
     public short chk_sum;  // ube16
     public short urg_ptr;  // ube16
 
+    // data_off specifies the number of 32-bit (4 byte) words,
+    // so we must multiply by 4 to get the total number of bytes
     public int data_off_bytes;
 
     @Override
-    void read(final NativeHeapBuffer buffer) {
+    protected void read(final NativeHeapBuffer buffer) {
         src_port = buffer.getNetworkShort();
         dst_port = buffer.getNetworkShort();
         seq = buffer.getNetworkInt();
@@ -70,13 +73,11 @@ public class TcpHdr extends JavaStruct {
         chk_sum = buffer.getNetworkShort();
         urg_ptr = buffer.getNetworkShort();
 
-        // data_off specifies the number of 32-bit (4 byte) words,
-        // so we must multiply by 4 to get the total number of bytes
         data_off_bytes = data_off * 4;
     }
 
     @Override
-    void write(final NativeHeapBuffer buffer) {
+    protected void write(final NativeHeapBuffer buffer) {
         buffer.setNetworkShort(src_port);
         buffer.setNetworkShort(dst_port);
         buffer.setNetworkInt(seq);

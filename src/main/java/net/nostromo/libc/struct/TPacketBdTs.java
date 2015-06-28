@@ -18,20 +18,26 @@
 package net.nostromo.libc.struct;
 
 import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Struct;
 
-public abstract class JavaStruct {
+public class TPacketBdTs extends Struct {
 
-    abstract void read(NativeHeapBuffer buffer);
+    // total bytes
+    public static final int SIZE = 8;
 
-    abstract void write(NativeHeapBuffer buffer);
+    // tpacket_bd_ts (linux/if_packet.h)
+    public int ts_sec;   // u32
+    public int ts_unsec; // u32 (union ts_usec/ts_nsec)
 
-    public void read(final NativeHeapBuffer buffer, final int offset) {
-        buffer.setOffset(offset);
-        read(buffer);
+    @Override
+    protected void read(final NativeHeapBuffer buffer) {
+        ts_sec = buffer.getInt();
+        ts_unsec = buffer.getInt();
     }
 
-    public void write(final NativeHeapBuffer buffer, final int offset) {
-        buffer.setOffset(offset);
-        write(buffer);
+    @Override
+    protected void write(final NativeHeapBuffer buffer) {
+        buffer.setInt(ts_sec);
+        buffer.setInt(ts_unsec);
     }
 }

@@ -17,36 +17,33 @@
 
 package net.nostromo.libc.struct;
 
-import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
-import net.nostromo.libc.Util;
+import net.nostromo.libc.NativeHeapBuffer;
 
-public class EthHdr extends Struct {
+public class TPacketHdrVariant1 extends Struct {
 
     // total bytes
-    public static final int SIZE = 14;
+    public static final int SIZE = 12;
 
-    // ethhdr (linux/if_ether.h)
-    public byte[] dst_mac = new byte[6]; // u8[6]
-    public byte[] src_mac = new byte[6]; // u8[6]
-    public short eth_type;               // ube16
+    // tpacket_hdr_variant1 (linux/if_packet.h)
+    public int tp_rxhash;      // u32
+    public int tp_vlan_tci;    // u32
+    public short tp_vlan_tpid; // u16
+    public short tp_padding;   // u16
 
     @Override
     protected void read(final NativeHeapBuffer buffer) {
-        buffer.getBytes(dst_mac);
-        buffer.getBytes(src_mac);
-        eth_type = buffer.getNetworkShort();
+        tp_rxhash = buffer.getInt();
+        tp_vlan_tci = buffer.getInt();
+        tp_vlan_tpid = buffer.getShort();
+        tp_padding = buffer.getShort();
     }
 
     @Override
     protected void write(final NativeHeapBuffer buffer) {
-        buffer.setBytes(dst_mac);
-        buffer.setBytes(src_mac);
-        buffer.setNetworkShort(eth_type);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
+        buffer.setInt(tp_rxhash);
+        buffer.setInt(tp_vlan_tci);
+        buffer.setShort(tp_vlan_tpid);
+        buffer.setShort(tp_padding);
     }
 }

@@ -17,36 +17,36 @@
 
 package net.nostromo.libc.struct;
 
+import net.nostromo.libc.Union;
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
-import net.nostromo.libc.Util;
 
-public class EthHdr extends Struct {
+public class IfReqRn extends Union {
 
     // total bytes
-    public static final int SIZE = 14;
+    public static final int SIZE = IfReq.IF_NAMESIZE;
 
-    // ethhdr (linux/if_ether.h)
-    public byte[] dst_mac = new byte[6]; // u8[6]
-    public byte[] src_mac = new byte[6]; // u8[6]
-    public short eth_type;               // ube16
+    public enum Name implements FieldName {NAME}
+
+    public byte[] name; // 8[IF_NAMESIZE]
+
+    public IfReqRn(final NativeHeapBuffer buffer) {
+        super(buffer);
+    }
+
+    @Override
+    public void setFieldName(final FieldName unionField) {
+        this.fieldName = unionField;
+
+        if (unionField == Name.NAME) name = new byte[IfReq.IF_NAMESIZE];
+    }
 
     @Override
     protected void read(final NativeHeapBuffer buffer) {
-        buffer.getBytes(dst_mac);
-        buffer.getBytes(src_mac);
-        eth_type = buffer.getNetworkShort();
+        if (fieldName == Name.NAME) buffer.getBytes(name);
     }
 
     @Override
     protected void write(final NativeHeapBuffer buffer) {
-        buffer.setBytes(dst_mac);
-        buffer.setBytes(src_mac);
-        buffer.setNetworkShort(eth_type);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
+        if (fieldName == Name.NAME) buffer.setBytes(name);
     }
 }

@@ -19,34 +19,38 @@ package net.nostromo.libc.struct;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
-import net.nostromo.libc.Util;
 
-public class EthHdr extends Struct {
+public class IfMap extends Struct {
 
     // total bytes
-    public static final int SIZE = 14;
+    public static final int SIZE = 24;
 
-    // ethhdr (linux/if_ether.h)
-    public byte[] dst_mac = new byte[6]; // u8[6]
-    public byte[] src_mac = new byte[6]; // u8[6]
-    public short eth_type;               // ube16
+    // ifmap (net/if.h)
+    public long mem_start;               // u64
+    public long mem_end;                 // u64
+    public short base_addr;              // u16
+    public byte irq;                     // u8
+    public byte dma;                     // u8
+    public byte port;                    // u8
+    // 3 spare bytes
 
     @Override
     protected void read(final NativeHeapBuffer buffer) {
-        buffer.getBytes(dst_mac);
-        buffer.getBytes(src_mac);
-        eth_type = buffer.getNetworkShort();
+        mem_start = buffer.getLong();
+        mem_end = buffer.getLong();
+        base_addr = buffer.getShort();
+        irq = buffer.getByte();
+        dma = buffer.getByte();
+        port = buffer.getByte();
     }
 
     @Override
     protected void write(final NativeHeapBuffer buffer) {
-        buffer.setBytes(dst_mac);
-        buffer.setBytes(src_mac);
-        buffer.setNetworkShort(eth_type);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
+        buffer.setLong(mem_start);
+        buffer.setLong(mem_end);
+        buffer.setShort(base_addr);
+        buffer.setByte(irq);
+        buffer.setByte(dma);
+        buffer.setByte(port);
     }
 }

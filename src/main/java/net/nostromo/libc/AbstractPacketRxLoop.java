@@ -48,7 +48,7 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
     }
 
     public void loop() {
-        final TPacketBlockHdr blockHdr = new TPacketBlockHdr();
+        final TPacketBlockDesc blockHdr = new TPacketBlockDesc();
 
         final pollfd pollfd = new pollfd();
         pollfd.fd = sockFd;
@@ -63,13 +63,13 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
             final long blockStart = (long) blockSize * blockIdx;
             final long blockStatusOffset = mmapAddress + blockStart + statusOffset;
 
-            buffer.read(blockStart, TPacketBlockHdr.SIZE);
+            buffer.read(blockStart, TPacketBlockDesc.SIZE);
             blockHdr.read(buffer, 0);
 
             // poll the block until the kernel gives it back to user space
-            while ((blockHdr.block_status & TP_STATUS_USER) == 0) {
+            while ((blockHdr.hdr.bh1.block_status & TP_STATUS_USER) == 0) {
                 libc.poll(pollfd, 1, -1);
-                buffer.read(blockStart, TPacketBlockHdr.SIZE);
+                buffer.read(blockStart, TPacketBlockDesc.SIZE);
                 blockHdr.read(buffer, 0);
             }
 
@@ -77,7 +77,7 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
             final long start = System.nanoTime();
             for (long x = 0; x < loopCnt; x++) {
                 // fill the heap buffer from the off-heap memory
-                buffer.read(blockStart, Integer.toUnsignedLong(blockHdr.block_len));
+                buffer.read(blockStart, Integer.toUnsignedLong(blockHdr.hdr.bh1.blk_len));
                 blockHdr.read(buffer, 0);
                 log.info("\n{}", blockHdr);
 
@@ -101,10 +101,10 @@ public abstract class AbstractPacketRxLoop implements LibcConstants {
         }
     }
 
-    protected void walkBlock(final TPacketBlockHdr blockHdr) {
-        int tp3HdrOffset = blockHdr.offset_to_first_pkt;
+    protected void walkBlock(final TPacketBlockDesc blockHdr) {
+        int tp3HdrOffset = blockHdr.hdr.bh1.offset_to_first_pkt;
 
-        for (int idx = 0; idx < blockHdr.num_packets; idx++) {
+        for (int idx = 0; idx < blockHdr.hdr.bh1.num_pkts; idx++) {
             tp3Hdr.read(buffer, tp3HdrOffset);
             log.info("\n{}", tp3Hdr);
             handleEthernetPacket(tp3HdrOffset + tp3Hdr.tp_mac);

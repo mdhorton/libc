@@ -50,7 +50,6 @@ public interface LibcConstants {
     int PACKET_RX_RING = 5;
     int TP_FT_REQ_FILL_RXHASH = 0x1;
 
-
     int PACKET_FANOUT = 18;
     int PACKET_FANOUT_HASH = 0;
     int PACKET_FANOUT_LB = 1;
@@ -112,6 +111,7 @@ public interface LibcConstants {
     // ioctl
     int SIOCGIFFLAGS = 0x8913;
     int SIOCSIFFLAGS = 0x8914;
+    int SIOCGIFMTU = 0x8921;
 
     int IFF_PROMISC = 0x100;
 

@@ -18,9 +18,10 @@
 package net.nostromo.libc.struct;
 
 import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.Struct;
 import net.nostromo.libc.Util;
 
-public class IpHdr extends JavaStruct {
+public class IpHdr extends Struct {
 
     // total 20 bytes
     // can have up to 40 more bytes of optional headers
@@ -40,10 +41,12 @@ public class IpHdr extends JavaStruct {
     public int src_ip;     // ube32
     public int dst_ip;     // ube32
 
+    // hdr_len specifies the number of 32-bit (4 byte) words,
+    // so we must multiply by 4 to get the total number of bytes
     public int hdr_len_bytes;
 
     @Override
-    void read(final NativeHeapBuffer buffer) {
+    protected void read(final NativeHeapBuffer buffer) {
         byte b;
 
         b = buffer.getByte();
@@ -67,13 +70,11 @@ public class IpHdr extends JavaStruct {
         src_ip = buffer.getNetworkInt();
         dst_ip = buffer.getNetworkInt();
 
-        // hdr_len specifies the number of 32-bit (4 byte) words,
-        // so we must multiply by 4 to get the total number of bytes
         hdr_len_bytes = hdr_len * 4;
     }
 
     @Override
-    void write(final NativeHeapBuffer buffer) {
+    protected void write(final NativeHeapBuffer buffer) {
         buffer.setByte((byte) (version << 4 | hdr_len));
         buffer.setByte((byte) (dscp << 2 | ecn));
 

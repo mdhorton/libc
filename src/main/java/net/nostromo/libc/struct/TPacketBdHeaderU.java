@@ -18,35 +18,32 @@
 package net.nostromo.libc.struct;
 
 import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.Struct;
-import net.nostromo.libc.Util;
+import net.nostromo.libc.Union;
 
-public class EthHdr extends Struct {
+public class TPacketBdHeaderU extends Union {
 
     // total bytes
-    public static final int SIZE = 14;
+    public static final int SIZE = 40;
 
-    // ethhdr (linux/if_ether.h)
-    public byte[] dst_mac = new byte[6]; // u8[6]
-    public byte[] src_mac = new byte[6]; // u8[6]
-    public short eth_type;               // ube16
+    // tpacket_bd_header_u (linux/if_packet.h)
+    public TPacketHdrV1 bh1;
+
+    public TPacketBdHeaderU(final NativeHeapBuffer buffer) {
+        super(buffer);
+    }
+
+    @Override
+    public void setFieldName(final FieldName fieldName) {
+
+    }
 
     @Override
     protected void read(final NativeHeapBuffer buffer) {
-        buffer.getBytes(dst_mac);
-        buffer.getBytes(src_mac);
-        eth_type = buffer.getNetworkShort();
+        bh1.read(buffer);
     }
 
     @Override
     protected void write(final NativeHeapBuffer buffer) {
-        buffer.setBytes(dst_mac);
-        buffer.setBytes(src_mac);
-        buffer.setNetworkShort(eth_type);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
+        bh1.write(buffer);
     }
 }

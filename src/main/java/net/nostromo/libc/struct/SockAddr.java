@@ -19,34 +19,25 @@ package net.nostromo.libc.struct;
 
 import net.nostromo.libc.NativeHeapBuffer;
 import net.nostromo.libc.Struct;
-import net.nostromo.libc.Util;
 
-public class EthHdr extends Struct {
+public class SockAddr extends Struct {
 
     // total bytes
-    public static final int SIZE = 14;
+    public static final int SIZE = 16;
 
-    // ethhdr (linux/if_ether.h)
-    public byte[] dst_mac = new byte[6]; // u8[6]
-    public byte[] src_mac = new byte[6]; // u8[6]
-    public short eth_type;               // ube16
+    // ifmap (bits/socket.h)
+    public short sa_family;               // u16
+    public byte[] sa_data = new byte[14]; // 8[14]
 
     @Override
     protected void read(final NativeHeapBuffer buffer) {
-        buffer.getBytes(dst_mac);
-        buffer.getBytes(src_mac);
-        eth_type = buffer.getNetworkShort();
+        sa_family = buffer.getShort();
+        buffer.getBytes(sa_data);
     }
 
     @Override
     protected void write(final NativeHeapBuffer buffer) {
-        buffer.setBytes(dst_mac);
-        buffer.setBytes(src_mac);
-        buffer.setNetworkShort(eth_type);
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
+        buffer.setShort(sa_family);
+        buffer.setBytes(sa_data);
     }
 }
