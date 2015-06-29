@@ -33,6 +33,8 @@ public class LibcIo extends Libc implements LibcIoConstants {
 
     public native long mmap(long ptr_addr, long length, int prot, int flags, int fd, long offset);
 
+    public native int munmap(long ptr_addr, long length);
+
     public native int poll(long ptr_fds, long nfds, int timeout);
 
     public void enablePromiscMode(final int fd, final String ifName) {

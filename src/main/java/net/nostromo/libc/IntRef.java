@@ -15,17 +15,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.system;
+package net.nostromo.libc;
 
-import net.nostromo.libc.Libc;
+public class IntRef {
 
-public class LibcSystem extends Libc {
+    private final long pointer;
 
-    public native int sched_setaffinity(int pid, long cpusetsize, long ptr_mask);
+    public IntRef(final int value) {
+        pointer = TheUnsafe.unsafe.allocateMemory(Integer.BYTES);
+        TheUnsafe.unsafe.putInt(pointer, value);
+    }
 
-    public native int getpagesize();
+    public long pointer() {
+        return pointer;
+    }
 
-    public native int getpid();
-
-    public native long syscall(long sysno);
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            TheUnsafe.unsafe.freeMemory(pointer);
+        } finally {
+            super.finalize();
+        }
+    }
 }
