@@ -24,8 +24,8 @@ import net.nostromo.libc.struct.Struct;
 // https://en.wikipedia.org/wiki/Transmission_Control_Protocol
 public class TcpHdr extends Struct {
 
-    // total 20 bytes
     // can have up to 40 more bytes of optional headers
+    public static final int BYTES = 20;
 
     public short src_port; // ube16
     public short dst_port; // ube16

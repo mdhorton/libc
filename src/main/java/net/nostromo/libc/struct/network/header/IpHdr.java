@@ -25,8 +25,8 @@ import net.nostromo.libc.struct.Struct;
 // https://en.wikipedia.org/wiki/IPv4
 public class IpHdr extends Struct {
 
-    // total 20 bytes
     // can have up to 40 more bytes of optional headers
+    public static final int BYTES = 20;
 
     public byte version;   // u8:4
     public byte hdr_len;   // u8:4
@@ -98,10 +98,10 @@ public class IpHdr extends Struct {
     @Override
     public String toString() {
         return String.format("%s -> %s  ver: %d  len: %d (%d)  dscp: %d  ecn: %d  id: %d  " +
-                        "flags: %d  frag: %d  ttl: %d  proto: %d  chksum: %d", Util.inetNtoA(
-                        src_ip), Util.inetNtoA(dst_ip), version, Short.toUnsignedInt(tot_len),
+                        "flags: %d  frag: %d  ttl: %d  proto: %d  chksum: %d",
+                Util.inetNtoA(src_ip), Util.inetNtoA(dst_ip), version, Short.toUnsignedInt(tot_len),
                 hdr_len_bytes, dscp, ecn, Short.toUnsignedInt(id), flags, frag_off,
-                Byte.toUnsignedInt(ttl), Byte.toUnsignedInt(protocol), Short.toUnsignedInt(
-                        chk_sum));
+                Byte.toUnsignedInt(ttl), Byte.toUnsignedInt(protocol),
+                Short.toUnsignedInt(chk_sum));
     }
 }

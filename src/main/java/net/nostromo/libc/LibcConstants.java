@@ -77,9 +77,16 @@ public interface LibcConstants {
     int SOL_SOCKET = 1;
     int SOL_PACKET = 263;
 
+    // packet filtering
+    int SO_ATTACH_FILTER = 26;
+    int SO_DETACH_FILTER = 27;
+
     int TPACKET_V1 = 0;
     int TPACKET_V2 = 1;
     int TPACKET_V3 = 2;
+
+    int TPACKET2_HDRLEN = LibcConstantsJni.getTPACKET2_HDRLEN();
+    int TPACKET3_HDRLEN = LibcConstantsJni.getTPACKET3_HDRLEN();
 
     int PACKET_ADD_MEMBERSHIP = LibcConstantsJni.getPACKET_ADD_MEMBERSHIP();
     int PACKET_DROP_MEMBERSHIP = LibcConstantsJni.getPACKET_DROP_MEMBERSHIP();
@@ -87,6 +94,7 @@ public interface LibcConstants {
     int PACKET_COPY_THRESH = 7;
     int PACKET_VERSION = 10;
     int PACKET_TX_RING = 13;
+    int PACKET_LOSS = 14;
     int PACKET_FANOUT = 18;
 
     int PACKET_FANOUT_HASH = 0;

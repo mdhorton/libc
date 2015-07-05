@@ -50,6 +50,10 @@ public class LibcConstantsJni {
 
     public static native int getMAP_NORESERVE();
 
+    public static native int getTPACKET2_HDRLEN();
+
+    public static native int getTPACKET3_HDRLEN();
+
     public static native int getPACKET_ADD_MEMBERSHIP();
 
     public static native int getPACKET_DROP_MEMBERSHIP();

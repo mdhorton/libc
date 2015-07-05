@@ -23,6 +23,8 @@ import net.nostromo.libc.struct.Struct;
 // tpacket3_hdr (linux/if_packet.h)
 public class TPacket3Hdr extends Struct {
 
+    // TPACKET2_HDRLEN = 68 bytes
+
     // total bytes
     public static final int BYTES = 48;
 
@@ -73,8 +75,9 @@ public class TPacket3Hdr extends Struct {
     @Override
     public String toString() {
         return String.format("%d.%d  next: %d  len: %d (%d)  status: %d  mac: %d  net: %d",
-                Integer.toUnsignedLong(sec), Integer.toUnsignedLong(nsec), Integer.toUnsignedLong(
-                next_offset), Integer.toUnsignedLong(len), Integer.toUnsignedLong(snaplen),
-                Integer.toUnsignedLong(status), Short.toUnsignedInt(mac), Short.toUnsignedInt(net));
+                Integer.toUnsignedLong(sec), Integer.toUnsignedLong(nsec),
+                Integer.toUnsignedLong(next_offset), Integer.toUnsignedLong(len),
+                Integer.toUnsignedLong(snaplen), Integer.toUnsignedLong(status),
+                Short.toUnsignedInt(mac), Short.toUnsignedInt(net));
     }
 }

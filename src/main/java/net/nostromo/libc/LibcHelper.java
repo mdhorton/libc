@@ -6,6 +6,7 @@ import net.nostromo.libc.struct.network.PacketMreq;
 import net.nostromo.libc.struct.network.ifreq.IfReq;
 import net.nostromo.libc.struct.network.ifreq.IfReqRnUnion;
 import net.nostromo.libc.struct.network.ifreq.IfReqRuUnion;
+import net.nostromo.libc.struct.network.socket.SockFProg;
 import net.nostromo.libc.struct.system.CpuSetT;
 
 public class LibcHelper implements LibcConstants {
@@ -15,6 +16,16 @@ public class LibcHelper implements LibcConstants {
     public static final LibcHelper helper = new LibcHelper();
 
     private LibcHelper() {}
+
+    public void setCpu(final int cpu) {
+        setCpu(0, cpu);
+    }
+
+    public void setCpu(final int pid, final int cpu) {
+        final CpuSetT cpuSet = new CpuSetT();
+        cpuSet.CPU_SET(cpu);
+        libc.sched_setaffinity(pid, CpuSetT.BYTES, cpuSet.pointer());
+    }
 
     public void enablePromiscMode(final int sock, final String ifName) {
         final PacketMreq mreq = new PacketMreq();
@@ -78,20 +89,19 @@ public class LibcHelper implements LibcConstants {
         return ifReq.ifru.ifindex;
     }
 
-    public void setCpu(final int cpu) {
-        setCpu(0, cpu);
-    }
-
-    public void setCpu(final int pid, final int cpu) {
-        final CpuSetT cpuSet = new CpuSetT();
-        cpuSet.CPU_SET(cpu);
-        libc.sched_setaffinity(pid, CpuSetT.BYTES, cpuSet.pointer());
-    }
-
-    // currently, this doesnt work for TPACKET_V3
+    // currently this only works for TPACKET_V2
     public void setPacketCopyThreshold(final int sock, final int threshold) {
         final IntRef intRef = new IntRef(threshold);
         libc.setsockopt(sock, SOL_PACKET, PACKET_COPY_THRESH, intRef.pointer(), Integer.BYTES);
+    }
+
+    public void setPacketLossDiscard(final int sock) {
+        final IntRef ref = new IntRef(1);
+        libc.setsockopt(sock, SOL_PACKET, PACKET_LOSS, ref.pointer(), Integer.BYTES);
+    }
+
+    public void setAttachFilter(final int sock, final SockFProg sockFProg) {
+        libc.setsockopt(sock, SOL_PACKET, SO_ATTACH_FILTER, sockFProg.pointer(), SockFProg.BYTES);
     }
 
     public int getReceiveBufferSize(final int sock) {

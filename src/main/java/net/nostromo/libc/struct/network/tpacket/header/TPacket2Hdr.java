@@ -23,6 +23,12 @@ import net.nostromo.libc.struct.Struct;
 // tpacket2_hdr (linux/if_packet.h)
 public class TPacket2Hdr extends Struct {
 
+    // TPACKET2_HDRLEN = 52 bytes
+    // tpacket2_hdr (32) + sockaddr_ll (20) = 52
+    // then 14 byte gap
+    // ethhdr (mac) usually offset 66
+    // iphdr  (net) usually offset 80
+
     // total bytes
     public static final int BYTES = 32;
 
@@ -77,8 +83,8 @@ public class TPacket2Hdr extends Struct {
     @Override
     public String toString() {
         return String.format("%d.%d  len: %d (%d)  status: %d  mac: %d  net: %d",
-                Integer.toUnsignedLong(sec), Integer.toUnsignedLong(nsec), Integer.toUnsignedLong(
-                len), Integer.toUnsignedLong(snaplen), Integer.toUnsignedLong(status),
-                Short.toUnsignedInt(mac), Short.toUnsignedInt(net));
+                Integer.toUnsignedLong(sec), Integer.toUnsignedLong(nsec),
+                Integer.toUnsignedLong(len), Integer.toUnsignedLong(snaplen),
+                Integer.toUnsignedLong(status), Short.toUnsignedInt(mac), Short.toUnsignedInt(net));
     }
 }
