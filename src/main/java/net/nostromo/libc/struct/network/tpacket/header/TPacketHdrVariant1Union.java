@@ -17,13 +17,13 @@
 
 package net.nostromo.libc.struct.network.tpacket.header;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Union;
 
 public class TPacketHdrVariant1Union extends Union {
 
     // total bytes
-    public static final int SIZE = TPacketHdrVariant1.SIZE;
+    public static final int BYTES = TPacketHdrVariant1.BYTES;
 
     public enum Name implements FieldName {HV1}
 
@@ -41,12 +41,12 @@ public class TPacketHdrVariant1Union extends Union {
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         if (fieldName == Name.HV1) hv1.read(buffer);
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         if (fieldName == Name.HV1) hv1.write(buffer);
     }
 }

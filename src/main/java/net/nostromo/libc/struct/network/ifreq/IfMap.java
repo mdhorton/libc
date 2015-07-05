@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.network.ifreq;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // ifmap (net/if.h)
@@ -34,7 +34,7 @@ public class IfMap extends Struct {
     public byte port;                    // u8
     // 3 spare bytes
 
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         mem_start = buffer.getLong();
         mem_end = buffer.getLong();
         base_addr = buffer.getShort();
@@ -44,7 +44,7 @@ public class IfMap extends Struct {
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setLong(mem_start);
         buffer.setLong(mem_end);
         buffer.setShort(base_addr);

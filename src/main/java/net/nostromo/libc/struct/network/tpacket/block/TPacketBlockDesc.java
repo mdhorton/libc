@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.network.tpacket.block;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // tpacket_block_desc (linux/if_packet.h)
@@ -28,31 +28,30 @@ public class TPacketBlockDesc extends Struct {
 
     public int version;          // u32
     public int offset_to_priv;   // u32
-    public TPacketBdHeaderU hdr;
+    public TPacketBdHeaderU hdr_u;
 
-    public TPacketBlockDesc(final NativeHeapBuffer buffer, final TPacketBdHeaderU.Name name) {
+    public TPacketBlockDesc(final OffHeapBuffer buffer, final TPacketBdHeaderU.Name name) {
         super(buffer);
-        hdr = new TPacketBdHeaderU(name);
+        hdr_u = new TPacketBdHeaderU(name);
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         version = buffer.getInt();
         offset_to_priv = buffer.getInt();
-        hdr.read(buffer);
+        hdr_u.read(buffer);
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setInt(version);
         buffer.setInt(offset_to_priv);
-        hdr.write(buffer);
+        hdr_u.write(buffer);
     }
 
     @Override
     public String toString() {
-        return String.format("ver: %d  priv: %d",
-                Integer.toUnsignedLong(version),
-                Integer.toUnsignedLong(offset_to_priv));
+        return String.format("ver: %d  priv: %d  %s", Integer.toUnsignedLong(version),
+                Integer.toUnsignedLong(offset_to_priv), hdr_u.toString());
     }
 }

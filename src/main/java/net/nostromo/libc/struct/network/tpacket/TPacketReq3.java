@@ -17,14 +17,14 @@
 
 package net.nostromo.libc.struct.network.tpacket;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // tpacket_req3 (linux/if_packet.h)
 public class TPacketReq3 extends Struct {
 
     // total bytes
-    public static final int SIZE = 28;
+    public static final int BYTES = 28;
 
     public int block_size;       // u32 (must be multiple of PAGE_SIZE, and should be power of 2 or space is wasted)
     public int block_nr;         // u32
@@ -35,11 +35,11 @@ public class TPacketReq3 extends Struct {
     public int feature_req_word; // u32
 
     public TPacketReq3() {
-        super(SIZE);
+        super(BYTES);
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         block_size = buffer.getInt();
         block_nr = buffer.getInt();
         frame_size = buffer.getInt();
@@ -50,7 +50,7 @@ public class TPacketReq3 extends Struct {
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setInt(block_size);
         buffer.setInt(block_nr);
         buffer.setInt(frame_size);

@@ -21,21 +21,24 @@ public class LibcException extends RuntimeException {
 
     private final String command;
     private final int returnCode;
-    private final String errorMessage;
+    private final String error;
 
-    public LibcException(final String command, final int returnCode, final String errorMessage) {
+    public LibcException(final String command, final int returnCode, final String error) {
+        super(String.format("%s: %s [%d]", command, error, returnCode));
         this.command = command;
         this.returnCode = returnCode;
-        this.errorMessage = errorMessage;
+        this.error = error;
     }
 
-    @Override
-    public String getMessage() {
-        return String.format("%s: %s [%d]", command, errorMessage, returnCode);
+    public String getCommand() {
+        return command;
     }
 
-    @Override
-    public String getLocalizedMessage() {
-        return getMessage();
+    public int getReturnCode() {
+        return returnCode;
+    }
+
+    public String getError() {
+        return error;
     }
 }

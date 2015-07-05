@@ -17,8 +17,10 @@
 
 package net.nostromo.libc.struct.network.tpacket.block;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
+
+import java.math.BigInteger;
 
 // tpacket_hdr_v1 (linux/if_packet.h)
 public class TPacketHdrV1 extends Struct {
@@ -45,7 +47,7 @@ public class TPacketHdrV1 extends Struct {
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         block_status = buffer.getInt();
         num_pkts = buffer.getInt();
         offset_to_first_pkt = buffer.getInt();
@@ -56,7 +58,7 @@ public class TPacketHdrV1 extends Struct {
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setInt(block_status);
         buffer.setInt(num_pkts);
         buffer.setInt(offset_to_first_pkt);
@@ -64,5 +66,14 @@ public class TPacketHdrV1 extends Struct {
         buffer.setLong(seq_num);
         ts_first_pkt.write(buffer);
         ts_last_pkt.write(buffer);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("status: %d  pkts: %d  offset: %d  len: %d  seq: %s  %s  %s",
+                Integer.toUnsignedLong(block_status), Integer.toUnsignedLong(num_pkts),
+                Integer.toUnsignedLong(offset_to_first_pkt), Integer.toUnsignedLong(blk_len),
+                BigInteger.valueOf(seq_num).toString(), ts_first_pkt.toString(),
+                ts_last_pkt.toString());
     }
 }

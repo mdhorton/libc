@@ -17,33 +17,33 @@
 
 package net.nostromo.libc.struct.network.tpacket.header;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // tpacket_hdr_variant1 (linux/if_packet.h)
 public class TPacketHdrVariant1 extends Struct {
 
     // total bytes
-    public static final int SIZE = 12;
+    public static final int BYTES = 12;
 
-    public int tp_rxhash;      // u32
-    public int tp_vlan_tci;    // u32
-    public short tp_vlan_tpid; // u16
-    public short tp_padding;   // u16
+    public int rxhash;      // u32
+    public int vlan_tci;    // u32
+    public short vlan_tpid; // u16
+    public short padding;   // u16
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
-        tp_rxhash = buffer.getInt();
-        tp_vlan_tci = buffer.getInt();
-        tp_vlan_tpid = buffer.getShort();
-        tp_padding = buffer.getShort();
+    public void read(final OffHeapBuffer buffer) {
+        rxhash = buffer.getInt();
+        vlan_tci = buffer.getInt();
+        vlan_tpid = buffer.getShort();
+        padding = buffer.getShort();
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
-        buffer.setInt(tp_rxhash);
-        buffer.setInt(tp_vlan_tci);
-        buffer.setShort(tp_vlan_tpid);
-        buffer.setShort(tp_padding);
+    public void write(final OffHeapBuffer buffer) {
+        buffer.setInt(rxhash);
+        buffer.setInt(vlan_tci);
+        buffer.setShort(vlan_tpid);
+        buffer.setShort(padding);
     }
 }

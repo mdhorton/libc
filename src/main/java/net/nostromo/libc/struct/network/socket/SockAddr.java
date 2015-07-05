@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.network.socket;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // sockaddr (bits/socket.h)
@@ -30,13 +30,13 @@ public class SockAddr extends Struct {
     public byte[] sa_data = new byte[14]; // 8[14]
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         sa_family = buffer.getShort();
         buffer.getBytes(sa_data);
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setShort(sa_family);
         buffer.setBytes(sa_data);
     }

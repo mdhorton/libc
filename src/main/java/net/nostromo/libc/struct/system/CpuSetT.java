@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.system;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // cpu_set_t (bits/sched.h)
@@ -28,12 +28,12 @@ public class CpuSetT extends Struct {
     public static final int ARRAY_SIZE = CPU_SETSIZE / NCPUBITS;
 
     // total bytes
-    public static final int SIZE = ARRAY_SIZE * Long.BYTES;
+    public static final int BYTES = ARRAY_SIZE * Long.BYTES;
 
     public long[] bits;
 
     public CpuSetT() {
-        super(SIZE);
+        super(BYTES);
     }
 
     @Override
@@ -42,24 +42,18 @@ public class CpuSetT extends Struct {
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         buffer.getLongs(bits);
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setLongs(bits);
     }
 
-    private int CPUELT(final int cpu) {
-        return cpu / NCPUBITS;
-    }
-
-    private long CPUMASK(final int cpu) {
-        return 1L << (cpu % NCPUBITS);
-    }
-
     public void CPU_SET(final int cpu) {
-        bits[CPUELT(cpu)] = bits[CPUELT(cpu)] | CPUMASK(cpu);
+        final int idx = cpu / NCPUBITS;
+        final long mask = 1L << (cpu % NCPUBITS);
+        bits[idx] |= mask;
     }
 }

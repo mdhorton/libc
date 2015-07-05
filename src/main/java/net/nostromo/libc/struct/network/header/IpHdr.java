@@ -17,9 +17,9 @@
 
 package net.nostromo.libc.struct.network.header;
 
-import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.struct.Struct;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.Util;
+import net.nostromo.libc.struct.Struct;
 
 // iphdr (netinet/ip.h)
 // https://en.wikipedia.org/wiki/IPv4
@@ -46,12 +46,12 @@ public class IpHdr extends Struct {
     // so we must multiply by 4 to get the total number of bytes
     public int hdr_len_bytes;
 
-    public IpHdr(final NativeHeapBuffer buffer) {
+    public IpHdr(final OffHeapBuffer buffer) {
         super(buffer);
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         byte b;
 
         b = buffer.getByte();
@@ -79,7 +79,7 @@ public class IpHdr extends Struct {
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setByte((byte) (version << 4 | hdr_len));
         buffer.setByte((byte) (dscp << 2 | ecn));
 
@@ -98,17 +98,10 @@ public class IpHdr extends Struct {
     @Override
     public String toString() {
         return String.format("%s -> %s  ver: %d  len: %d (%d)  dscp: %d  ecn: %d  id: %d  " +
-                        "flags: %d  frag: %d  ttl: %d  proto: %d  chksum: %d",
-                Util.inetNtoA(src_ip), Util.inetNtoA(dst_ip),
-                version,
-                Short.toUnsignedInt(tot_len), hdr_len,
-                dscp,
-                ecn,
-                Short.toUnsignedInt(id),
-                flags,
-                frag_off,
-                Byte.toUnsignedInt(ttl),
-                Byte.toUnsignedInt(protocol),
-                Short.toUnsignedInt(chk_sum));
+                        "flags: %d  frag: %d  ttl: %d  proto: %d  chksum: %d", Util.inetNtoA(
+                        src_ip), Util.inetNtoA(dst_ip), version, Short.toUnsignedInt(tot_len),
+                hdr_len_bytes, dscp, ecn, Short.toUnsignedInt(id), flags, frag_off,
+                Byte.toUnsignedInt(ttl), Byte.toUnsignedInt(protocol), Short.toUnsignedInt(
+                        chk_sum));
     }
 }

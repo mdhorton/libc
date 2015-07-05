@@ -17,8 +17,7 @@
 
 package net.nostromo.libc.struct;
 
-import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.struct.Struct;
+import net.nostromo.libc.OffHeapBuffer;
 
 public abstract class Union extends Struct {
 
@@ -32,7 +31,7 @@ public abstract class Union extends Struct {
         super(instantiateObjects);
     }
 
-    public Union(final NativeHeapBuffer buffer) {
+    public Union(final OffHeapBuffer buffer) {
         super(buffer);
     }
 

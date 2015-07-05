@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.network.ifreq;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Union;
 import net.nostromo.libc.struct.network.socket.SockAddr;
 
@@ -63,7 +63,7 @@ public class IfReqRuUnion extends Union {
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         if (fieldName == Name.ADDR) addr.read(buffer);
         else if (fieldName == Name.DSTADDR) dstaddr.read(buffer);
         else if (fieldName == Name.BROADADDR) broadaddr.read(buffer);
@@ -79,7 +79,7 @@ public class IfReqRuUnion extends Union {
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         if (fieldName == Name.ADDR) addr.write(buffer);
         else if (fieldName == Name.DSTADDR) dstaddr.write(buffer);
         else if (fieldName == Name.BROADADDR) broadaddr.write(buffer);

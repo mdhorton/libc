@@ -30,7 +30,8 @@ public class TheUnsafe {
             final Field field = Unsafe.class.getDeclaredField("theUnsafe");
             field.setAccessible(true);
             unsafe = (Unsafe) field.get(null);
-        } catch (final Exception e) {
+        }
+        catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }

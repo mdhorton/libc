@@ -15,27 +15,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.io;
+package net.nostromo.libc.struct.system;
 
-public interface LibcIoConstants {
+import net.nostromo.libc.OffHeapBuffer;
+import net.nostromo.libc.struct.Struct;
 
-    // poll
-    int POLLIN = 0x001;
-    int POLLERR = 0x008;
+// timespec (time.h)
+public class Timespec extends Struct {
 
-    // mmap
-    int PROT_READ = 0x1;
-    int PROT_WRITE = 0x2;
+    // total bytes
+    public static final int BYTES = 16;
 
-    int MAP_SHARED = 0x01;
-    int MAP_LOCKED = 0x02000;
-    int MAP_NORESERVE = 0x04000;
+    public long tv_sec;  // 64
+    public long tv_nsec; // 64
 
-    // ioctl
-    int SIOCGIFFLAGS = 0x8913;
-    int SIOCSIFFLAGS = 0x8914;
-    int SIOCGIFMTU = 0x8921;
-    int SIOCGIFINDEX = 0x8933;
+    public Timespec() {
+        super(BYTES);
+    }
 
-    int IFF_PROMISC = 0x100;
+    @Override
+    public void read(final OffHeapBuffer buffer) {
+        tv_sec = buffer.getLong();
+        tv_nsec = buffer.getLong();
+    }
+
+    @Override
+    public void write(final OffHeapBuffer buffer) {
+        buffer.setLong(tv_sec);
+        buffer.setLong(tv_nsec);
+    }
 }

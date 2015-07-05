@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.network.ifreq;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // ifreq (linux/if.h)
@@ -42,13 +42,13 @@ public class IfReq extends Struct {
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         ifrn.read(buffer);
         ifru.read(buffer);
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         ifrn.write(buffer);
         ifru.write(buffer);
     }

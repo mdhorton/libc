@@ -15,44 +15,39 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct.network.tpacket.block;
+package net.nostromo.libc.struct.network.tpacket;
 
 import net.nostromo.libc.OffHeapBuffer;
-import net.nostromo.libc.struct.Union;
+import net.nostromo.libc.struct.Struct;
 
-// tpacket_bd_header_u (linux/if_packet.h)
-public class TPacketBdHeaderU extends Union {
+// tpacket_req (linux/if_packet.h)
+public class TPacketReq extends Struct {
 
     // total bytes
-    public static final int SIZE = 40;
+    public static final int BYTES = 16;
 
-    public enum Name implements FieldName {BH1}
+    public int block_size;       // u32 (must be multiple of PAGE_SIZE, and should be power of 2 or space is wasted)
+    public int block_nr;         // u32
+    public int frame_size;       // u32 (should always be a multiple of TPACKET_ALIGNMENT)
+    public int frame_nr;         // u32 (must be (block_size / frame_size) * block_nr)
 
-    public TPacketHdrV1 bh1;
-
-    public TPacketBdHeaderU(final Name name) {
-        setFieldName(name);
-    }
-
-    @Override
-    public void setFieldName(final FieldName fieldName, final boolean instantiateObjects) {
-        this.fieldName = fieldName;
-
-        if (fieldName == Name.BH1) bh1 = new TPacketHdrV1(instantiateObjects);
+    public TPacketReq() {
+        super(BYTES);
     }
 
     @Override
     public void read(final OffHeapBuffer buffer) {
-        if (fieldName == Name.BH1) bh1.read(buffer);
+        block_size = buffer.getInt();
+        block_nr = buffer.getInt();
+        frame_size = buffer.getInt();
+        frame_nr = buffer.getInt();
     }
 
     @Override
     public void write(final OffHeapBuffer buffer) {
-        if (fieldName == Name.BH1) bh1.write(buffer);
-    }
-
-    @Override
-    public String toString() {
-        return bh1.toString();
+        buffer.setInt(block_size);
+        buffer.setInt(block_nr);
+        buffer.setInt(frame_size);
+        buffer.setInt(frame_nr);
     }
 }

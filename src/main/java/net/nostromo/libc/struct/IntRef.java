@@ -15,17 +15,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.system;
+package net.nostromo.libc.struct;
 
-import net.nostromo.libc.Libc;
+import net.nostromo.libc.TheUnsafe;
 
-public class LibcSystem extends Libc {
+public class IntRef {
 
-    public native int sched_setaffinity(int pid, long cpusetsize, long ptr_mask);
+    private final long pointer;
 
-    public native int getpagesize();
+    public IntRef(final int value) {
+        pointer = TheUnsafe.unsafe.allocateMemory(Integer.BYTES);
+        TheUnsafe.unsafe.putInt(pointer, value);
+    }
 
-    public native int getpid();
+    public long pointer() {
+        return pointer;
+    }
 
-    public native long syscall(long sysno);
+    public int getValue() {
+        return TheUnsafe.unsafe.getInt(pointer);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            TheUnsafe.unsafe.freeMemory(pointer);
+        }
+        finally {
+            super.finalize();
+        }
+    }
 }

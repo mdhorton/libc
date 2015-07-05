@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.network.tpacket.block;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // tpacket_bd_ts (linux/if_packet.h)
@@ -30,14 +30,19 @@ public class TPacketBdTs extends Struct {
     public int ts_unsec; // u32 (union ts_usec/ts_nsec)
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         ts_sec = buffer.getInt();
         ts_unsec = buffer.getInt();
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setInt(ts_sec);
         buffer.setInt(ts_unsec);
+    }
+
+    @Override
+    public String toString() {
+        return ts_sec + "." + ts_unsec;
     }
 }

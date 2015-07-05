@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.network.header;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // tcphdr (netinet/tcp.h)
@@ -50,12 +50,12 @@ public class TcpHdr extends Struct {
     // so we must multiply by 4 to get the total number of bytes
     public int data_off_bytes;
 
-    public TcpHdr(final NativeHeapBuffer buffer) {
+    public TcpHdr(final OffHeapBuffer buffer) {
         super(buffer);
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         src_port = buffer.getNetworkShort();
         dst_port = buffer.getNetworkShort();
         seq = buffer.getNetworkInt();
@@ -82,7 +82,7 @@ public class TcpHdr extends Struct {
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setNetworkShort(src_port);
         buffer.setNetworkShort(dst_port);
         buffer.setNetworkInt(seq);
@@ -99,24 +99,12 @@ public class TcpHdr extends Struct {
 
     @Override
     public String toString() {
-        return String.format("%d -> %d  seq: %d  ack: %d  data: %d  rsvd: %d  ns: %d  cwr: %d  ece: %d  urg: %d  " +
+        return String.format(
+                "%d -> %d  seq: %d  ack: %d  data: %d  rsvd: %d  ns: %d  cwr: %d  ece: %d  urg: %d  " +
                         "ack: %d  psh: %d  rst: %d  syn: %d  fin: %d  window: %d  chksum: %d  urgptr: %d",
                 Short.toUnsignedInt(src_port), Short.toUnsignedInt(dst_port),
-                Integer.toUnsignedLong(seq),
-                Integer.toUnsignedLong(ack_seq),
-                data_off,
-                reserved,
-                ns,
-                cwr,
-                ece,
-                urg,
-                ack,
-                psh,
-                rst,
-                syn,
-                fin,
-                Short.toUnsignedInt(wndw_sz),
-                Short.toUnsignedInt(chk_sum),
-                Short.toUnsignedInt(urg_ptr));
+                Integer.toUnsignedLong(seq), Integer.toUnsignedLong(ack_seq), data_off, reserved,
+                ns, cwr, ece, urg, ack, psh, rst, syn, fin, Short.toUnsignedInt(wndw_sz),
+                Short.toUnsignedInt(chk_sum), Short.toUnsignedInt(urg_ptr));
     }
 }

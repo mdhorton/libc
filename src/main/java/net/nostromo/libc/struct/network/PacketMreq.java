@@ -15,44 +15,43 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.nostromo.libc.struct.network.tpacket.block;
+package net.nostromo.libc.struct.network;
 
 import net.nostromo.libc.OffHeapBuffer;
-import net.nostromo.libc.struct.Union;
+import net.nostromo.libc.struct.Struct;
 
-// tpacket_bd_header_u (linux/if_packet.h)
-public class TPacketBdHeaderU extends Union {
+// packet_mreq (linux/if_packet.h)
+public class PacketMreq extends Struct {
 
-    // total bytes
-    public static final int SIZE = 40;
+    public static final int BYTES = 16;
 
-    public enum Name implements FieldName {BH1}
+    public int ifindex;    // 32
+    public short type;     // u16
+    public short alen;     // u16
+    public byte[] address; // u8[8]
 
-    public TPacketHdrV1 bh1;
-
-    public TPacketBdHeaderU(final Name name) {
-        setFieldName(name);
+    public PacketMreq() {
+        super(BYTES);
     }
 
     @Override
-    public void setFieldName(final FieldName fieldName, final boolean instantiateObjects) {
-        this.fieldName = fieldName;
-
-        if (fieldName == Name.BH1) bh1 = new TPacketHdrV1(instantiateObjects);
+    public void instantiateObjects() {
+        address = new byte[8];
     }
 
     @Override
     public void read(final OffHeapBuffer buffer) {
-        if (fieldName == Name.BH1) bh1.read(buffer);
+        ifindex = buffer.getInt();
+        type = buffer.getShort();
+        alen = buffer.getShort();
+        buffer.getBytes(address);
     }
 
     @Override
     public void write(final OffHeapBuffer buffer) {
-        if (fieldName == Name.BH1) bh1.write(buffer);
-    }
-
-    @Override
-    public String toString() {
-        return bh1.toString();
+        buffer.setInt(ifindex);
+        buffer.setShort(type);
+        buffer.setShort(alen);
+        buffer.setBytes(address);
     }
 }

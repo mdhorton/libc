@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.io;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // pollfd (sys/poll.h)
@@ -35,14 +35,14 @@ public class PollFd extends Struct {
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         fd = buffer.getInt();
         events = buffer.getShort();
         revents = buffer.getShort();
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setInt(fd);
         buffer.setShort(events);
         buffer.setShort(revents);

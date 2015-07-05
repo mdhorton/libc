@@ -20,61 +20,65 @@ package net.nostromo.libc.struct.network.tpacket.header;
 import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
-// tpacket3_hdr (linux/if_packet.h)
-public class TPacket3Hdr extends Struct {
+// tpacket2_hdr (linux/if_packet.h)
+public class TPacket2Hdr extends Struct {
 
     // total bytes
-    public static final int BYTES = 48;
+    public static final int BYTES = 32;
 
-    public int next_offset;              // u32
-    public int sec;                      // u32
-    public int nsec;                     // u32
-    public int snaplen;                  // u32
-    public int len;                      // u32
-    public int status;                   // u32
-    public short mac;                    // u16
-    public short net;                    // u16
-    public TPacketHdrVariant1Union hv1_u;
-    public byte[] padding = new byte[8]; // u8[8]
+    public int status;      // u32
+    public int len;         // u32
+    public int snaplen;     // u32
+    public short mac;       // u16
+    public short net;       // u16
+    public int sec;         // u32
+    public int nsec;        // u32
+    public short vlan_tci;  // u16
+    public short vlan_tpid; // u16
+    public byte[] padding;  // u8[4]
 
-    public TPacket3Hdr(final OffHeapBuffer buffer, final TPacketHdrVariant1Union.Name name) {
+    public TPacket2Hdr(final OffHeapBuffer buffer) {
         super(buffer);
-        hv1_u = new TPacketHdrVariant1Union(name);
+    }
+
+    @Override
+    public void instantiateObjects() {
+        padding = new byte[4];
     }
 
     @Override
     public void read(final OffHeapBuffer buffer) {
-        next_offset = buffer.getInt();
-        sec = buffer.getInt();
-        nsec = buffer.getInt();
-        snaplen = buffer.getInt();
-        len = buffer.getInt();
         status = buffer.getInt();
+        len = buffer.getInt();
+        snaplen = buffer.getInt();
         mac = buffer.getShort();
         net = buffer.getShort();
-        hv1_u.read(buffer);
+        sec = buffer.getInt();
+        nsec = buffer.getInt();
+        vlan_tci = buffer.getShort();
+        vlan_tpid = buffer.getShort();
         buffer.getBytes(padding);
     }
 
     @Override
     public void write(final OffHeapBuffer buffer) {
-        buffer.setInt(next_offset);
-        buffer.setInt(sec);
-        buffer.setInt(nsec);
-        buffer.setInt(snaplen);
-        buffer.setInt(len);
         buffer.setInt(status);
+        buffer.setInt(len);
+        buffer.setInt(snaplen);
         buffer.setShort(mac);
         buffer.setShort(net);
-        hv1_u.write(buffer);
+        buffer.setInt(sec);
+        buffer.setInt(nsec);
+        buffer.setShort(vlan_tci);
+        buffer.setShort(vlan_tpid);
         buffer.setBytes(padding);
     }
 
     @Override
     public String toString() {
-        return String.format("%d.%d  next: %d  len: %d (%d)  status: %d  mac: %d  net: %d",
+        return String.format("%d.%d  len: %d (%d)  status: %d  mac: %d  net: %d",
                 Integer.toUnsignedLong(sec), Integer.toUnsignedLong(nsec), Integer.toUnsignedLong(
-                next_offset), Integer.toUnsignedLong(len), Integer.toUnsignedLong(snaplen),
-                Integer.toUnsignedLong(status), Short.toUnsignedInt(mac), Short.toUnsignedInt(net));
+                len), Integer.toUnsignedLong(snaplen), Integer.toUnsignedLong(status),
+                Short.toUnsignedInt(mac), Short.toUnsignedInt(net));
     }
 }

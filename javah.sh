@@ -5,8 +5,5 @@ TARGET_DIR="$HOME/ClionProjects/libc_jni"
 gradle clean build
 cd build/classes/main
 
-javah -d $TARGET_DIR net.nostromo.libc.file.LibcFile
-javah -d $TARGET_DIR net.nostromo.libc.io.LibcIo
-javah -d $TARGET_DIR net.nostromo.libc.network.LibcNetwork
-javah -d $TARGET_DIR net.nostromo.libc.system.LibcSystem
-
+javah -d ${TARGET_DIR} net.nostromo.libc.Libc
+javah -d ${TARGET_DIR} net.nostromo.libc.LibcConstantsJni

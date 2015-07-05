@@ -17,7 +17,7 @@
 
 package net.nostromo.libc.struct.network.ifreq;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Union;
 
 // ifreq (linux/if.h)
@@ -42,12 +42,12 @@ public class IfReqRnUnion extends Union {
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         if (fieldName == Name.NAME) buffer.getBytes(name);
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         if (fieldName == Name.NAME) buffer.setBytes(name);
     }
 }

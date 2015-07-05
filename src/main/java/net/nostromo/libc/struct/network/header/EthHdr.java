@@ -17,34 +17,34 @@
 
 package net.nostromo.libc.struct.network.header;
 
-import net.nostromo.libc.NativeHeapBuffer;
-import net.nostromo.libc.struct.Struct;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.Util;
+import net.nostromo.libc.struct.Struct;
 
 // ethhdr (linux/if_ether.h)
 // https://en.wikipedia.org/wiki/Ethernet_frame
 public class EthHdr extends Struct {
 
     // total bytes
-    public static final int SIZE = 14;
+    public static final int BYTES = 14;
 
     public byte[] dst_mac = new byte[6]; // u8[6]
     public byte[] src_mac = new byte[6]; // u8[6]
     public short eth_type;               // ube16
 
-    public EthHdr(final NativeHeapBuffer buffer) {
+    public EthHdr(final OffHeapBuffer buffer) {
         super(buffer);
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
+    public void read(final OffHeapBuffer buffer) {
         buffer.getBytes(dst_mac);
         buffer.getBytes(src_mac);
         eth_type = buffer.getNetworkShort();
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
+    public void write(final OffHeapBuffer buffer) {
         buffer.setBytes(dst_mac);
         buffer.setBytes(src_mac);
         buffer.setNetworkShort(eth_type);

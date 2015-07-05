@@ -17,72 +17,74 @@
 
 package net.nostromo.libc.struct;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 
 public abstract class Struct {
 
-    protected NativeHeapBuffer buffer;
+    protected OffHeapBuffer buffer;
     protected boolean instantiateObjects;
 
     public Struct() {
         this(null, true);
     }
 
-    public Struct(final int size) {
-        this(new NativeHeapBuffer(size), true);
+    public Struct(final long size) {
+        this(OffHeapBuffer.allocate(size), true);
     }
 
-    public Struct(NativeHeapBuffer buffer) {
+    public Struct(final OffHeapBuffer buffer) {
         this(buffer, true);
     }
 
-    public Struct(boolean instantiateObjects) {
+    public Struct(final boolean instantiateObjects) {
         this(null, instantiateObjects);
     }
 
-    public Struct(NativeHeapBuffer buffer, boolean instantiateObjects) {
+    public Struct(final OffHeapBuffer buffer, final boolean instantiateObjects) {
         this.buffer = buffer;
         this.instantiateObjects = instantiateObjects;
         if (instantiateObjects) instantiateObjects();
     }
 
-    public abstract void read(NativeHeapBuffer buffer);
+    public abstract void read(OffHeapBuffer buffer);
 
-    public abstract void write(NativeHeapBuffer buffer);
+    public abstract void write(OffHeapBuffer buffer);
 
     public void instantiateObjects() {}
 
     public void read() {
-        buffer.read(0);
         read(0);
     }
 
     public void write() {
         write(0);
-        buffer.write(0);
     }
 
-    public void read(final int offset) {
+    public void read(final long offset) {
         read(buffer, offset);
     }
 
-    public void write(final int offset) {
+    public void write(final long offset) {
         write(buffer, offset);
     }
 
-    public void read(final NativeHeapBuffer buffer, final int offset) {
+    public void read(final OffHeapBuffer buffer, final long offset) {
         buffer.setOffset(offset);
         read(buffer);
     }
 
-    public void write(final NativeHeapBuffer buffer, final int offset) {
+    public void write(final OffHeapBuffer buffer, final long offset) {
         buffer.setOffset(offset);
         write(buffer);
     }
 
     public long pointer() {
         write();
-        return buffer.getPointer();
+        return bufferPointer();
+    }
+
+    public long bufferPointer() {
+        return buffer.pointer();
     }
 
     public static void copyString(final byte[] bytes, final String str) {

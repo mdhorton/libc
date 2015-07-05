@@ -17,51 +17,51 @@
 
 package net.nostromo.libc.struct.network.socket;
 
-import net.nostromo.libc.NativeHeapBuffer;
+import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
 // sockaddr_ll (linux/if_packet.h)
 public class SockAddrLl extends Struct {
 
     // total bytes
-    public static final int SIZE = 20;
+    public static final int BYTES = 20;
 
-    public short sll_family;   // u16
-    public short sll_protocol; // ube16
-    public int sll_ifindex;    // 32
-    public short sll_hatype;   // u16
-    public byte sll_pkttype;   // u8
-    public byte sll_halen;     // u8
-    public byte[] sll_addr;    // u8[8]
+    public short family;   // u16
+    public short protocol; // ube16
+    public int ifindex;    // 32
+    public short hatype;   // u16
+    public byte pkttype;   // u8
+    public byte halen;     // u8
+    public byte[] addr;    // u8[8]
 
     public SockAddrLl() {
-        super(SIZE);
+        super(BYTES);
     }
 
     @Override
     public void instantiateObjects() {
-        sll_addr = new byte[8];
+        addr = new byte[8];
     }
 
     @Override
-    public void read(final NativeHeapBuffer buffer) {
-        sll_family = buffer.getShort();
-        sll_protocol = buffer.getNetworkShort();
-        sll_ifindex = buffer.getInt();
-        sll_hatype = buffer.getShort();
-        sll_pkttype = buffer.getByte();
-        sll_halen = buffer.getByte();
-        buffer.getBytes(sll_addr);
+    public void read(final OffHeapBuffer buffer) {
+        family = buffer.getShort();
+        protocol = buffer.getNetworkShort();
+        ifindex = buffer.getInt();
+        hatype = buffer.getShort();
+        pkttype = buffer.getByte();
+        halen = buffer.getByte();
+        buffer.getBytes(addr);
     }
 
     @Override
-    public void write(final NativeHeapBuffer buffer) {
-        buffer.setShort(sll_family);
-        buffer.setNetworkShort(sll_protocol);
-        buffer.setInt(sll_ifindex);
-        buffer.setShort(sll_hatype);
-        buffer.setByte(sll_pkttype);
-        buffer.setByte(sll_halen);
-        buffer.setBytes(sll_addr);
+    public void write(final OffHeapBuffer buffer) {
+        buffer.setShort(family);
+        buffer.setNetworkShort(protocol);
+        buffer.setInt(ifindex);
+        buffer.setShort(hatype);
+        buffer.setByte(pkttype);
+        buffer.setByte(halen);
+        buffer.setBytes(addr);
     }
 }
