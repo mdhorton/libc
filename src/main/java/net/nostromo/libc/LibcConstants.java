@@ -96,6 +96,7 @@ public interface LibcConstants {
     int PACKET_TX_RING = 13;
     int PACKET_LOSS = 14;
     int PACKET_FANOUT = 18;
+    int PACKET_QDISC_BYPASS = 20;
 
     int PACKET_FANOUT_HASH = 0;
     int PACKET_FANOUT_LB = 1;

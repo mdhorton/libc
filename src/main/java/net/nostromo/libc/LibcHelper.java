@@ -95,12 +95,17 @@ public class LibcHelper implements LibcConstants {
         libc.setsockopt(sock, SOL_PACKET, PACKET_COPY_THRESH, intRef.pointer(), Integer.BYTES);
     }
 
-    public void setPacketLossDiscard(final int sock) {
+    public void enableQdiscBypass(final int sock) {
+        final IntRef ref = new IntRef(1);
+        libc.setsockopt(sock, SOL_PACKET, PACKET_QDISC_BYPASS, ref.pointer(), Integer.BYTES);
+    }
+
+    public void enablePacketLossDiscard(final int sock) {
         final IntRef ref = new IntRef(1);
         libc.setsockopt(sock, SOL_PACKET, PACKET_LOSS, ref.pointer(), Integer.BYTES);
     }
 
-    public void setAttachFilter(final int sock, final SockFProg sockFProg) {
+    public void attachFilter(final int sock, final SockFProg sockFProg) {
         libc.setsockopt(sock, SOL_PACKET, SO_ATTACH_FILTER, sockFProg.pointer(), SockFProg.BYTES);
     }
 
