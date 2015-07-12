@@ -73,6 +73,4 @@ public class Libc {
     public native int clock_gettime(int clk_id, long ptr_timespec);
 
     public native long syscall(long sysno);
-
-    public native void sync_synchronize();
 }

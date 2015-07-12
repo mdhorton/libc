@@ -88,9 +88,9 @@ public class TcpHdr extends Struct {
         buffer.setNetworkInt(seq);
         buffer.setNetworkInt(ack_seq);
 
-        buffer.setNetworkShort((short) (data_off << 12 | reserved << 9 |
-                ns << 8 | cwr << 7 | ece << 6 | urg << 5 | ack << 4 |
-                psh << 3 | rst << 2 | syn << 1 | fin));
+        buffer.setNetworkShort(
+                (short) (data_off << 12 | reserved << 9 | ns << 8 | cwr << 7 | ece << 6 |
+                        urg << 5 | ack << 4 | psh << 3 | rst << 2 | syn << 1 | fin));
 
         buffer.setNetworkShort(wndw_sz);
         buffer.setNetworkShort(chk_sum);
@@ -100,11 +100,12 @@ public class TcpHdr extends Struct {
     @Override
     public String toString() {
         return String.format(
-                "%d -> %d  seq: %d  ack: %d  data: %d  rsvd: %d  ns: %d  cwr: %d  ece: %d  urg: %d  " +
-                        "ack: %d  psh: %d  rst: %d  syn: %d  fin: %d  window: %d  chksum: %d  urgptr: %d",
-                Short.toUnsignedInt(src_port), Short.toUnsignedInt(dst_port),
-                Integer.toUnsignedLong(seq), Integer.toUnsignedLong(ack_seq), data_off, reserved,
-                ns, cwr, ece, urg, ack, psh, rst, syn, fin, Short.toUnsignedInt(wndw_sz),
-                Short.toUnsignedInt(chk_sum), Short.toUnsignedInt(urg_ptr));
+                "%d -> %d  seq: %d  ack: %d  data: %d  rsvd: %d  ns: %d  cwr: %d  ece: %d" +
+                        "  urg: %d  ack: %d  psh: %d  rst: %d  syn: %d  fin: %d  window: %d" +
+                        "  chksum: %d  urgptr: %d", Short.toUnsignedInt(src_port),
+                Short.toUnsignedInt(dst_port), Integer.toUnsignedLong(seq),
+                Integer.toUnsignedLong(ack_seq), data_off, reserved, ns, cwr, ece, urg, ack, psh,
+                rst, syn, fin, Short.toUnsignedInt(wndw_sz), Short.toUnsignedInt(chk_sum),
+                Short.toUnsignedInt(urg_ptr));
     }
 }

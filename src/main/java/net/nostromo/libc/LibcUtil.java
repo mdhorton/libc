@@ -9,13 +9,13 @@ import net.nostromo.libc.struct.network.ifreq.IfReqRuUnion;
 import net.nostromo.libc.struct.network.socket.SockFProg;
 import net.nostromo.libc.struct.system.CpuSetT;
 
-public class LibcHelper implements LibcConstants {
+public class LibcUtil implements LibcConstants {
 
     private static final Libc libc = Libc.libc;
 
-    public static final LibcHelper helper = new LibcHelper();
+    public static final LibcUtil util = new LibcUtil();
 
-    private LibcHelper() {}
+    private LibcUtil() {}
 
     public void setCpu(final int cpu) {
         setCpu(0, cpu);
