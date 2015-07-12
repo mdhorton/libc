@@ -72,5 +72,7 @@ public class Libc {
 
     public native int clock_gettime(int clk_id, long ptr_timespec);
 
+    public native long rdtscp();
+
     public native long syscall(long sysno);
 }

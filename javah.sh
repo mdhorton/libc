@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-TARGET_DIR="$HOME/ClionProjects/libc_jni"
+TARGET_DIR="${HOME}/ClionProjects/libc_jni"
 
 gradle clean build
 cd build/classes/main
