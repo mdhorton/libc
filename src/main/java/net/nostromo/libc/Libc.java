@@ -31,6 +31,8 @@ public class Libc {
 
     public native int open(String pathName, int flags, int mode);
 
+    public native int close(int fd);
+
     public native long lseek(int fd, long offset, int whence);
 
     public native int truncate(String pathName, long length);
@@ -39,9 +41,9 @@ public class Libc {
 
     public native int ioctl(int fd, long request, long ptr_argp);
 
-    public native long write(int fd, long ptr_buf, long count);
-
     public native long read(int fd, long ptr_buf, long count);
+
+    public native long write(int fd, long ptr_buf, long count);
 
     public native long mmap(long ptr_addr, long length, int prot, int flags, int fd, long offset);
 
