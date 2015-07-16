@@ -78,6 +78,6 @@ public class Libc {
 
     public native long syscall(long sysno);
 
-    // this does nothing, its for timing JNI call overhead JNI
+    // this does nothing, its for timing JNI call overhead
     public native void noop();
 }

@@ -55,6 +55,9 @@ public interface LibcConstants {
 
     int IFF_PROMISC = 0x100;
 
+    int SIOCSHWTSTAMP = 0x89b0;
+    int SIOCGHWTSTAMP = 0x89b1;
+
     byte IPPROTO_ICMP = 1;
     byte IPPROTO_IGMP = 2;
     byte IPPROTO_TCP = 6;

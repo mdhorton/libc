@@ -18,6 +18,7 @@
 package net.nostromo.libc.struct.network.ifreq;
 
 import net.nostromo.libc.OffHeapBuffer;
+import net.nostromo.libc.TheUnsafe;
 import net.nostromo.libc.struct.Union;
 import net.nostromo.libc.struct.network.socket.SockAddr;
 
@@ -60,6 +61,7 @@ public class IfReqRuUnion extends Union {
         else if (unionField == Name.MAP) map = new IfMap();
         else if (unionField == Name.SLAVE) slave = new byte[IfReq.IF_NAMESIZE];
         else if (unionField == Name.NEWNAME) newname = new byte[IfReq.IF_NAMESIZE];
+        else if (unionField == Name.DATA) ptr_data = TheUnsafe.unsafe.allocateMemory(Long.BYTES);
     }
 
     @Override
@@ -92,5 +94,15 @@ public class IfReqRuUnion extends Union {
         else if (fieldName == Name.SLAVE) buffer.setBytes(slave);
         else if (fieldName == Name.NEWNAME) buffer.setBytes(newname);
         else if (fieldName == Name.DATA) buffer.setLong(ptr_data);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            if (ptr_data > 0) TheUnsafe.unsafe.freeMemory(ptr_data);
+        }
+        finally {
+            super.finalize();
+        }
     }
 }
