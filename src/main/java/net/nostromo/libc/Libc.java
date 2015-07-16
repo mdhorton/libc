@@ -77,4 +77,7 @@ public class Libc {
     public native long rdtscp();
 
     public native long syscall(long sysno);
+
+    // this does nothing, its for timing JNI call overhead JNI
+    public native void noop();
 }
