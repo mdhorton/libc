@@ -60,6 +60,10 @@ public class OffHeapBuffer {
         return pointer;
     }
 
+    public long getOffset() {
+        return offset;
+    }
+
     public void setOffset(final long offset) {
         this.offset = offset;
     }

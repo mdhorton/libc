@@ -50,6 +50,34 @@ public class LibcConstantsJni {
 
     public static native int getMAP_NORESERVE();
 
+    public static native int getMAP_POPULATE();
+
+    public static native int getSIOCGIFFLAGS();
+
+    public static native int getSIOCSIFFLAGS();
+
+    public static native int getSIOCGIFMTU();
+
+    public static native int getSIOCSIFMTU();
+
+    public static native int getSIOCGIFINDEX();
+
+    public static native int getSIOCSHWTSTAMP();
+
+    public static native int getSIOCGHWTSTAMP();
+
+    public static native int getIFF_PROMISC();
+
+    public static native byte getIPPROTO_ICMP();
+
+    public static native byte getIPPROTO_IGMP();
+
+    public static native byte getIPPROTO_TCP();
+
+    public static native byte getIPPROTO_UDP();
+
+    public static native byte getIPPROTO_MTP();
+
     public static native int getTPACKET2_HDRLEN();
 
     public static native int getTPACKET3_HDRLEN();

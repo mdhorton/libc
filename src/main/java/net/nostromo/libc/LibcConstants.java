@@ -45,24 +45,25 @@ public interface LibcConstants {
     int MAP_SHARED = LibcConstantsJni.getMAP_SHARED();
     int MAP_LOCKED = LibcConstantsJni.getMAP_LOCKED();
     int MAP_NORESERVE = LibcConstantsJni.getMAP_NORESERVE();
-    int MAP_POPULATE = 0x08000;
+    int MAP_POPULATE = LibcConstantsJni.getMAP_POPULATE();
 
     // ioctl
-    int SIOCGIFFLAGS = 0x8913;
-    int SIOCSIFFLAGS = 0x8914;
-    int SIOCGIFMTU = 0x8921;
-    int SIOCGIFINDEX = 0x8933;
+    int SIOCGIFFLAGS = LibcConstantsJni.getSIOCGIFFLAGS();
+    int SIOCSIFFLAGS =  LibcConstantsJni.getSIOCSIFFLAGS();
+    int SIOCGIFMTU = LibcConstantsJni.getSIOCGIFMTU();
+    int SIOCSIFMTU = LibcConstantsJni.getSIOCSIFMTU();
+    int SIOCGIFINDEX = LibcConstantsJni.getSIOCGIFINDEX();
 
-    int IFF_PROMISC = 0x100;
+    int SIOCSHWTSTAMP = LibcConstantsJni.getSIOCSHWTSTAMP();
+    int SIOCGHWTSTAMP = LibcConstantsJni.getSIOCGHWTSTAMP();
 
-    int SIOCSHWTSTAMP = 0x89b0;
-    int SIOCGHWTSTAMP = 0x89b1;
+    int IFF_PROMISC = LibcConstantsJni.getIFF_PROMISC();
 
-    byte IPPROTO_ICMP = 1;
-    byte IPPROTO_IGMP = 2;
-    byte IPPROTO_TCP = 6;
-    byte IPPROTO_UDP = 17;
-    byte IPPROTO_MTP = 92;
+    byte IPPROTO_ICMP = LibcConstantsJni.getIPPROTO_ICMP();
+    byte IPPROTO_IGMP = LibcConstantsJni.getIPPROTO_IGMP();
+    byte IPPROTO_TCP = LibcConstantsJni.getIPPROTO_TCP();
+    byte IPPROTO_UDP = LibcConstantsJni.getIPPROTO_UDP();
+    byte IPPROTO_MTP = LibcConstantsJni.getIPPROTO_MTP();
 
     int SO_RCVBUF = 8;
 

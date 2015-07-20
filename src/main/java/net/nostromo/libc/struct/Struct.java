@@ -21,6 +21,8 @@ import net.nostromo.libc.OffHeapBuffer;
 
 public abstract class Struct {
 
+    // TODO: handle size more accurately, replace BYTES with size()
+
     protected OffHeapBuffer buffer;
     protected boolean instantiateObjects;
 

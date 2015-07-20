@@ -100,7 +100,7 @@ public class TcpHdr extends Struct {
     @Override
     public String toString() {
         return String.format(
-                "%d -> %d  seq: %d  ack: %d  data: %d  rsvd: %d  ns: %d  cwr: %d  ece: %d" +
+                "%d -> %d  seq: %d  ackseq: %d  data: %d  rsvd: %d  ns: %d  cwr: %d  ece: %d" +
                         "  urg: %d  ack: %d  psh: %d  rst: %d  syn: %d  fin: %d  window: %d" +
                         "  chksum: %d  urgptr: %d", Short.toUnsignedInt(src_port),
                 Short.toUnsignedInt(dst_port), Integer.toUnsignedLong(seq),

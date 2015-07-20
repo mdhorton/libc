@@ -51,6 +51,7 @@ public class EthHdr extends Struct {
 
     @Override
     public String toString() {
-        return String.format("%s -> %s", Util.bytesToMac(src_mac), Util.bytesToMac(dst_mac));
+        return String.format("%s -> %s  type: %d", Util.bytesToMac(src_mac),
+                Util.bytesToMac(dst_mac), eth_type);
     }
 }

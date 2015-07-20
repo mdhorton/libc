@@ -7,6 +7,7 @@ import net.nostromo.libc.struct.network.ifreq.IfReq;
 import net.nostromo.libc.struct.network.ifreq.IfReqRnUnion;
 import net.nostromo.libc.struct.network.ifreq.IfReqRuUnion;
 import net.nostromo.libc.struct.network.socket.SockFProg;
+import net.nostromo.libc.struct.network.socket.SockFilter;
 import net.nostromo.libc.struct.system.CpuSetT;
 
 public class LibcUtil implements LibcConstants {
@@ -79,6 +80,14 @@ public class LibcUtil implements LibcConstants {
         return ifReq.ifru.mtu;
     }
 
+    public void setMtu(final int sock, final String ifName, final int mtu) {
+        final IfReq ifReq = new IfReq(IfReqRnUnion.Name.NAME, IfReqRuUnion.Name.MTU);
+        Struct.copyString(ifReq.ifrn.name, ifName);
+
+        ifReq.ifru.mtu = mtu;
+        libc.ioctl(sock, SIOCSIFMTU, ifReq.pointer());
+    }
+
     public int getInterfaceId(final int sock, final String ifName) {
         final IfReq ifReq = new IfReq(IfReqRnUnion.Name.NAME, IfReqRuUnion.Name.IFINDEX);
         Struct.copyString(ifReq.ifrn.name, ifName);
@@ -89,7 +98,7 @@ public class LibcUtil implements LibcConstants {
         return ifReq.ifru.ifindex;
     }
 
-    // currently this only works for TPACKET_V2
+    // currently this seems to be broken
     public void setPacketCopyThreshold(final int sock, final int threshold) {
         final IntRef intRef = new IntRef(threshold);
         libc.setsockopt(sock, SOL_PACKET, PACKET_COPY_THRESH, intRef.pointer(), Integer.BYTES);
@@ -105,8 +114,14 @@ public class LibcUtil implements LibcConstants {
         libc.setsockopt(sock, SOL_PACKET, PACKET_LOSS, ref.pointer(), Integer.BYTES);
     }
 
-    public void attachFilter(final int sock, final SockFProg sockFProg) {
-        libc.setsockopt(sock, SOL_PACKET, SO_ATTACH_FILTER, sockFProg.pointer(), SockFProg.BYTES);
+    public void attachFilter(final int sock, final Object[][] filterObjs) {
+        final SockFilter filter = new SockFilter(filterObjs);
+
+        final SockFProg sockFProg = new SockFProg();
+        sockFProg.len = (short) filterObjs.length;
+        sockFProg.ptr_filter = filter.pointer();
+
+        libc.setsockopt(sock, SOL_SOCKET, SO_ATTACH_FILTER, sockFProg.pointer(), SockFProg.BYTES);
     }
 
     public int getReceiveBufferSize(final int sock) {

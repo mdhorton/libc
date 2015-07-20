@@ -20,32 +20,32 @@ package net.nostromo.libc.struct.network.socket;
 import net.nostromo.libc.OffHeapBuffer;
 import net.nostromo.libc.struct.Struct;
 
-// sock_fprog (linux/filter.h)
-public class SockFProg extends Struct {
+// sock_filter (linux/filter.h)
+public class SockFilter extends Struct {
 
-    // total bytes
-    // 16 bytes due to struct alignment of the widest scalar member
-    public static final int BYTES = 16;
+    private static final int BYTES = 8;
 
-    public short len;       // u16
-    // pointer to struct sock_filter
-    public long ptr_filter; // u64
+    private final Object[][] filter;
 
-    public SockFProg() {
-        super(BYTES);
+    public SockFilter(final Object[][] filter) {
+        super(BYTES * filter.length);
+        this.filter = filter;
     }
 
     @Override
-    public void read(final OffHeapBuffer buffer) {
-        len = buffer.getShort();
-        ptr_filter = buffer.getLong();
-    }
+    public void read(final OffHeapBuffer buffer) {}
 
     @Override
     public void write(final OffHeapBuffer buffer) {
-        buffer.setShort(len);
-        // skip 6 bytes due to struct alignment
-        buffer.setOffset(buffer.getOffset() + 6);
-        buffer.setLong(ptr_filter);
+        // short code  u16
+        // byte jt     u8
+        // byte jk     u8
+        // int k       u32
+        for (final Object[] obj : filter) {
+            buffer.setShort(((Integer) obj[0]).shortValue());
+            buffer.setByte(((Integer) obj[1]).byteValue());
+            buffer.setByte(((Integer) obj[2]).byteValue());
+            buffer.setInt(((Integer) obj[3]));
+        }
     }
 }
