@@ -59,12 +59,6 @@ public interface LibcConstants {
 
     int IFF_PROMISC = LibcConstantsJni.getIFF_PROMISC();
 
-    byte IPPROTO_ICMP = LibcConstantsJni.getIPPROTO_ICMP();
-    byte IPPROTO_IGMP = LibcConstantsJni.getIPPROTO_IGMP();
-    byte IPPROTO_TCP = LibcConstantsJni.getIPPROTO_TCP();
-    byte IPPROTO_UDP = LibcConstantsJni.getIPPROTO_UDP();
-    byte IPPROTO_MTP = LibcConstantsJni.getIPPROTO_MTP();
-
     int SO_RCVBUF = 8;
 
     int PF_PACKET = 17;
@@ -72,6 +66,13 @@ public interface LibcConstants {
 
     int ETH_HLEN = 14;
 
+    // these need to be constants for switch() and case statements
+    byte IPPROTO_IP = 0;
+    byte IPPROTO_ICMP = 1;
+    byte IPPROTO_IGMP = 2;
+    byte IPPROTO_TCP = 6;
+    byte IPPROTO_UDP = 17;
+    byte IPPROTO_MTP = 92;
     int ETH_P_ALL = 0x0003;
     int ETH_P_IP = 0x0800;
     int ETH_P_IPV6 = 0x86DD;

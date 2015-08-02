@@ -18,6 +18,10 @@ public class LibcUtil implements LibcConstants {
 
     private LibcUtil() {}
 
+    public void setLastCpu() {
+        setCpu(Runtime.getRuntime().availableProcessors() - 1);
+    }
+
     public void setCpu(final int cpu) {
         setCpu(0, cpu);
     }

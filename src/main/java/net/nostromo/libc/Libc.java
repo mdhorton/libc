@@ -78,6 +78,10 @@ public class Libc {
 
     public native long syscall(long sysno);
 
+    public native int nanosleep(long ptr_req, long ptr_rem);
+
+    public native int clock_nanosleep(int clock_id, int flag, long ptr_req, long ptr_rem);
+
     // this does nothing, its for timing JNI call overhead
     public native void noop();
 }
